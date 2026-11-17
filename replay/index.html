@@ -125,7 +125,7 @@ h1,h2,h3{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;letter-spaci
 <header>
 <p class="eyebrow">AI SHOWCASE · COMPUTER VISION · MAP AI</p>
 <h1>Từ ảnh tài xế chụp đến biển báo trên bản đồ dẫn đường</h1>
-<p class="sub">Chạy lại từng bước trên biển thật ở trung tâm TP.HCM: ảnh đường phố có vị trí và hướng, AI đọc biển theo bảng QCVN 41, gộp các lần thấy thành một biển, gắn vào đúng đoạn đường và chiều xe chạy, qua cổng kiểm tra rồi hiện lên bản đồ. Không có bước nào làm tay.</p>
+<p class="sub">Ảnh đường phố → AI đọc biển → gắn đường → router và tài xế. Không bước nào làm tay.</p>
 <div class="stats" id="stats"></div>
 <div class="cvbar"><span>detect</span><span>classify · QCVN 41</span><span>merge</span><span>snap to road</span><span>route</span></div>
 </header>
@@ -140,11 +140,11 @@ h1,h2,h3{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;letter-spaci
 </main>
 <section class="uc" id="usecases">
 <h2 class="uct">Use case: từ lúc nhận đơn tới lúc dẫn đường</h2>
-<p class="ucsub">Lớp biển không chỉ để vẽ bản đồ. Mỗi use case dưới đây là một chỗ trong luồng đơn của Ahamove dùng nó. Bấm từng ô để xem.</p>
+<p class="ucsub">Lớp biển dùng ở đâu trong luồng đơn.</p>
 <div class="ucflow" id="ucflow"></div>
 <div class="ucgrid"><div class="ucpanel" id="ucpanel" aria-live="polite"></div><div id="ucmap"></div></div>
 </section>
-<footer>Ảnh và vị trí phát hiện biển: © Mapillary contributors, CC BY-SA 4.0. Hình biển mẫu: QCVN 41 (Wikimedia Commons, PD-VietnamGov). Nền bản đồ: © OpenStreetMap contributors. Trang này là bản chạy lại từ dữ liệu đã xử lý sẵn; ảnh tài xế Ahamove sẽ đi qua đúng các bước này.</footer>
+<footer>© Mapillary (CC BY-SA 4.0) · © OpenStreetMap · QCVN 41</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -187,17 +187,17 @@ function go(i){
   const P=$("panel");P.classList.remove("fade");void P.offsetWidth;P.classList.add("fade");
   const sign=L.circleMarker([s.lat,s.lon],{radius:9,color:"#fff",weight:3,fillColor:"#FF7F32",fillOpacity:1});
   if(i===0){
-    P.innerHTML=`<h2>1 · Tài xế chụp, về nhà upload</h2><p class="lead">Ảnh gốc giữ GPS, giờ chụp và hướng camera. Hệ thống đọc các thông tin này từ ảnh, tài xế không phải nhập gì. Ảnh mẫu ở đây lấy từ Mapillary; ảnh tài xế Ahamove đi đúng luồng này.</p>
+    P.innerHTML=`<h2>1 · Tài xế chụp, về nhà upload</h2><p class="lead">Ảnh có sẵn GPS, giờ chụp, hướng camera. Tài xế không nhập gì.</p>
     <div class="photos">${s.photos.map((p,k)=>`<figure><span class="det">AI · ${s.qcvn}</span><img src="${p.file}" alt="Ảnh đường phố ${k+1}"><figcaption>Ảnh ${k+1} · hướng camera ${Math.round(p.compass)}°</figcaption></figure>`).join("")}</div>
     <dl class="meta"><dt>Đường</dt><dd>${s.edge.name||"(chưa có tên)"}</dd><dt>Số lần biển được thấy</dt><dd>${s.n} lần, ${s.days} ngày chụp khác nhau</dd><dt>Khoảng thời gian</dt><dd>${s.first_seen} → ${s.last_seen}</dd></dl>`;
     map.setView([s.lat,s.lon],17);sign.addTo(lay);
   }else if(i===1){
-    P.innerHTML=`<h2>2 · AI đọc biển, đối chiếu bảng QCVN 41</h2><p class="lead">Cắt vùng có biển trong ảnh, so với 120 hình biển mẫu của QCVN 41 (biển cấm, hiệu lệnh, chỉ dẫn, biển phụ) để ra mã biển chính thức.</p>
+    P.innerHTML=`<h2>2 · AI đọc biển, đối chiếu bảng QCVN 41</h2><p class="lead">Cắt vùng biển, so với bảng QCVN 41, ra mã biển.</p>
     <div class="read"><figure><span class="det">DETECT</span><img src="${s.crop}" alt="Biển cắt từ ảnh"><figcaption>Vùng cắt từ ảnh</figcaption></figure><span class="arrow">→</span><figure><img src="${s.ref}" alt="Hình mẫu ${s.qcvn}"><figcaption>Hình mẫu QCVN ${s.qcvn}</figcaption></figure></div>
     <div class="verdict">Kết quả: <b>${s.qcvn} · ${s.label}</b> · độ chắc: <b>${s.conf==="high"?"cao":s.conf}</b><br>Nhóm hiển thị khi dẫn đường: <b>${KIND[s.kind][0]}</b></div>`;
     map.setView([s.lat,s.lon],18);sign.addTo(lay);
   }else if(i===2){
-    P.innerHTML=`<h2>3 · Gộp nhiều lần thấy thành một biển</h2><p class="lead">Các lần phát hiện cùng mã biển, cùng hướng (lệch ≤ 45°) và cách nhau ≤ 20 m được gộp thành một biển duy nhất, lấy vị trí trung bình.</p>
+    P.innerHTML=`<h2>3 · Gộp nhiều lần thấy thành một biển</h2><p class="lead">Cùng mã, cùng hướng, cách ≤ 20 m → một biển.</p>
     <div class="verdict"><b>${s.members.length} lần phát hiện</b> (chấm nhỏ trên bản đồ) → <b>1 biển</b> (chấm cam)</div>
     <dl class="meta">${s.members.map((m,k)=>`<dt>Lần ${k+1}</dt><dd>${m.first_seen}${m.last_seen&&m.last_seen!==m.first_seen?" → "+m.last_seen:""}</dd>`).join("")}</dl>`;
     map.setView([s.lat,s.lon],20);
@@ -206,7 +206,7 @@ function go(i){
     sign.addTo(lay);
   }else if(i===3){
     const conf=s.edge.confidence,okc=conf>=.6,ok2=s.n>=2||s.days>=2,okd=(s.last_seen||"")>="2022-01-01";
-    P.innerHTML=`<h2>4 · Gắn vào đoạn đường, chiều xe chạy, rồi kiểm</h2><p class="lead">Biển quay mặt về phía xe mà nó áp dụng, nên chiều xe chạy = hướng mặt biển + 180°. Biển được gắn vào đoạn đường gần nhất cùng chiều đó.</p>
+    P.innerHTML=`<h2>4 · Gắn vào đoạn đường, chiều xe chạy, rồi kiểm</h2><p class="lead">Gắn vào đúng đoạn đường và chiều xe chạy, rồi qua cổng kiểm.</p>
     <dl class="meta"><dt>Đoạn đường</dt><dd>${s.edge.name||"(chưa có tên)"}</dd><dt>Chiều xe chạy</dt><dd>${s.travel}° (mũi tên trên bản đồ)</dd><dt>Độ tin khi gắn</dt><dd>${conf.toFixed(2)}</dd></dl>
     <ul class="gate"><li><span class="tick ${ok2?"":"no"}">${ok2?"✓":"!"}</span>Thấy độc lập từ 2 lần trở lên (${s.n} lần, ${s.days} ngày)</li>
     <li><span class="tick ${okd?"":"no"}">${okd?"✓":"!"}</span>Lần thấy gần nhất từ 2022 trở đi (${s.last_seen})</li>
@@ -219,19 +219,19 @@ function go(i){
     L.polygon([dest(b[0],b[1],s.travel,6),dest(b[0],b[1],s.travel+90,4),dest(b[0],b[1],s.travel-90,4)],{color:"#14213D",fillColor:"#14213D",fillOpacity:1,weight:1}).addTo(lay);
     sign.addTo(lay);
   }else if(i===4){
-    P.innerHTML=`<h2>5 · Lên bản đồ và vào tuyến dẫn đường</h2><p class="lead">Biển đã publish nằm trong lớp biển của Ahamove (${fmt(D.published)} biển ở vùng trung tâm). Router đọc lớp này để né đường cấm theo loại xe và giờ cấm; màn dẫn đường báo trước biển sắp tới.</p>
+    P.innerHTML=`<h2>5 · Lên bản đồ và vào tuyến dẫn đường</h2><p class="lead">${fmt(D.published)} biển đã publish. Router né cấm, tài xế được báo trước.</p>
     <div class="flow"><span>Ảnh</span>→<span>Mã QCVN</span>→<span>1 biển</span>→<span>Đoạn đường + chiều</span>→<span>Router + chip</span></div>
-    <div class="verdict">Góc phải bản đồ: chip báo biển sắp tới như trên màn dẫn đường (minh hoạ). Chấm màu là các biển đã publish, theo nhóm.</div>`;
+    `;
     map.setView([s.lat,s.lon],14);layer.addTo(map);sign.addTo(lay);$("legend").classList.add("on");
     $("phone").innerHTML=`<div class="chip hot"><img src="${s.ref}" alt=""><div>${s.label}<small>Biển sắp tới · ${s.edge.name||""}</small></div></div>`;
     $("phone").classList.add("on");
   }else if(i===5){
     const R=D.route_example,b=R.before,a=R.after,dk=(a.km-b.km),f1=x=>x.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
     const roads=[...new Set(b.bans.map(x=>x.road))].join(", ");
-    P.innerHTML=`<h2>6 · Áp vào tuyến và giá</h2><p class="lead">Bước tiếp theo: vùng cấm theo giờ là một lớp, biển trên từng con đường là lớp khác. Khi lớp biển vào router, tuyến xe tải né đoạn có biển cấm, và giá tính theo km của tuyến mới. Ví dụ: ${R.name} (bản demo, Valhalla công khai).</p>
+    P.innerHTML=`<h2>6 · Áp vào tuyến và giá</h2><p class="lead">Có lớp biển, tuyến né đoạn cấm và giá tính theo tuyến mới.</p>
     <dl class="meta"><dt>Chưa có lớp biển</dt><dd>${f1(b.km)} km · ${f1(b.minutes)} phút · đi qua <b>${b.bans.length} biển cấm</b> (${roads})</dd>
     <dt>Có lớp biển Mapillary</dt><dd>${f1(a.km)} km · ${f1(a.minutes)} phút · <b>${a.bans.length} biển cấm</b></dd></dl>
-    <div class="verdict">Tuyến dài thêm <b>${f1(dk)} km</b>: giá tính trên tuyến xe được đi, không phải tuyến ngắn nhưng phạm luật. Nét đứt đỏ: tuyến cũ · đường cam: tuyến né cấm.</div>
+    <div class="verdict">Tuyến dài thêm <b>${f1(dk)} km</b> · đỏ: tuyến cũ · cam: tuyến né cấm.</div>
     <div class="flow"><span>Lớp biển</span>→<span>Tuyến</span>→<span>Km</span>→<span>Giá</span>→<span>Dispatch</span></div>`;
     L.polyline(b.geometry,{color:"#C62828",weight:6,opacity:.85,dashArray:"10 8"}).addTo(lay);
     const pa=L.polyline(a.geometry,{color:"#FF7F32",weight:7,opacity:.95}).addTo(lay);
@@ -239,7 +239,7 @@ function go(i){
     L.circleMarker(a.geometry[a.geometry.length-1],{radius:8,color:"#fff",weight:3,fillColor:"#14213D",fillOpacity:1}).addTo(lay);
     map.fitBounds(L.latLngBounds(a.geometry.concat(b.geometry)).pad(.15));
   }else{
-    P.innerHTML=`<h2>7 · Tài xế đi và được báo biển cấm</h2><p class="lead">Mọi tài xế thừa hưởng lớp biển đã publish. Khi xe tới gần biển cấm cùng chiều đang chạy, app hiện chip và đọc to cảnh báo. Thử mô phỏng trên tuyến ở bước 6, hoặc bật GPS thật khi đang đi ở trung tâm TP.HCM.</p>
+    P.innerHTML=`<h2>7 · Tài xế đi và được báo biển cấm</h2><p class="lead">Tới gần biển cấm, app hiện chip và đọc to.</p>
     <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button><select id="dvsel" class="btn ghost" aria-label="Giọng đọc"></select></div>
     <div class="gpsmsg" id="gpsmsg"></div><ul class="wlog" id="wlog"></ul>`;
     const g=D.route_example.after.geometry;
@@ -283,7 +283,7 @@ function carAt(ll,h){if(!CAR)CAR=L.marker(ll,{icon:carIcon(h),zIndexOffset:1000}
 function tickActive(distOf){ACTIVE=ACTIVE.filter(a=>{const dd=distOf(a);if(dd<-15||!a.el.isConnected){a.el.style.opacity=.45;return false}a.el.querySelector("small").textContent=dd<=5?`đang qua · ${a.r[3]}`:`còn ${Math.round(dd/10)*10} m · ${a.r[3]}`;return true})}
 function simulate(g,ev){
   let d=0,next=0;const step=2.5,ahead=150,cum=ev.cum;$("wlog").innerHTML="";$("phone").innerHTML="";ACTIVE=[];
-  $("gpsmsg").textContent=`Tuyến ${(ev.total/1000).toFixed(2).replace(".",",")} km · ${ev.length} biển cùng chiều trên tuyến · tua nhanh khoảng 2 lần`;
+  $("gpsmsg").textContent=`Tuyến ${(ev.total/1000).toFixed(2).replace(".",",")} km · ${ev.length} biển cùng chiều trên tuyến`;
   SIM=setInterval(()=>{d+=step;if(d>=ev.total){endDrive();$("gpsmsg").textContent+=" · đã tới nơi";return}
     let i=1;while(i<cum.length-1&&cum[i]<d)i++;const f=(d-cum[i-1])/((cum[i]-cum[i-1])||1),a=g[i-1],b=g[i];
     const ll=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];carAt(ll,bear(a,b));map.panTo(ll,{animate:false});
@@ -318,12 +318,12 @@ const sicon=(code,sz)=>L.icon({iconUrl:`img/qcvn/${code}.png`,iconSize:[sz||30,s
 const zoneLayer=()=>L.polygon(D.usecase.zone,{color:"#C62828",weight:2,dashArray:"8 6",fillColor:"#C62828",fillOpacity:.08});
 let UC;const buildUC=()=>[
  {stage:"NHẬN ĐƠN",title:"Điểm lấy hàng trong vùng cấm, giờ cấm",tags:ILL,
-  rows:[["Tình huống","Đơn xe tải 1 tấn đặt 7:30, điểm lấy ở chợ Bến Thành, trong vùng cấm tải giờ cao điểm ("+D.usecase.zone_hours.replace(","," và ")+")."],["Hôm nay","Vùng cấm theo giờ đã có trong hệ thống, nhưng biển cấm trên từng con đường quanh điểm lấy thì chưa, ví dụ hẻm cấm xe tải."],["Có lớp biển","Biết cả biển cấm quanh điểm lấy: gợi ý điểm dừng gần nhất xe được vào, hẹn giờ ngoài giờ cấm, hoặc đổi loại xe."]],
-  win:"Tránh gán tài xế vào chỗ xe không được vào ngay từ lúc nhận đơn, trước khi có chuyện trên đường.",
+  rows:[["Tình huống","Xe tải 1 tấn, 7:30, lấy hàng ở chợ Bến Thành."],["Hôm nay","Có vùng cấm, chưa có biển từng đường."],["Có lớp biển","Gợi ý điểm dừng xe được vào, hẹn giờ hoặc đổi xe."]],
+  win:"Không gán xe vào chỗ cấm ngay từ đầu.",
   draw(){zoneLayer().addTo(UL);pin([10.7725,106.698],"#C62828","!").addTo(UL).bindTooltip("Điểm lấy 7:30 · trong vùng cấm",{permanent:true,direction:"top",offset:[0,-14]});UM.fitBounds(L.polygon(D.usecase.zone).getBounds().pad(.05))}},
  {stage:"DISPATCH",title:"Chọn tài xế không phải chạy xuyên vùng cấm để tới điểm lấy",tags:ILL,
-  rows:[["Tình huống","Điểm lấy ở Quận 7 lúc 7:30. Tài xế A đang ở Gò Vấp, tài xế B ở Nhà Bè, cách gần như nhau."],["Hôm nay","Ghép đơn theo khoảng cách hoặc ETA chưa xét đường tài xế phải chạy tới điểm lấy: A có thể được chọn dù phải cắt ngang vùng cấm."],["Có lớp biển","ETA tới điểm lấy tính bằng tuyến xe tải có né cấm: A phải đi vòng xa hơn, B được ưu tiên."]],
-  win:"Ghép đơn theo đường xe được phép đi, không theo đường chim bay hay đường xe máy.",
+  rows:[["Tình huống","Điểm lấy Quận 7, 7:30. Tài xế A ở Gò Vấp, B ở Nhà Bè."],["Hôm nay","A có thể được chọn dù phải cắt ngang vùng cấm."],["Có lớp biển","ETA tính theo tuyến né cấm: ưu tiên B."]],
+  win:"Ghép đơn theo đường xe được đi.",
   draw(){zoneLayer().addTo(UL);const P=[10.729,106.718],A=[10.838,106.665],B=[10.700,106.735];
    pin(P,"#14213D","P").addTo(UL).bindTooltip("Điểm lấy",{permanent:true,direction:"right",offset:[14,0]});
    pin(A,"#C62828","A").addTo(UL);pin(B,"#1F8A5B","B").addTo(UL);
@@ -333,30 +333,30 @@ let UC;const buildUC=()=>[
    UM.fitBounds(L.latLngBounds([A,B,P,[10.70,106.58]]).pad(.15))}},
  {stage:"BÁO GIÁ",title:"Giá tính trên tuyến xe được đi",tags:REAL,
   rows:[["Tình huống",D.route_example.name+"."],["Hôm nay",`Tuyến ${D.route_example.before.km} km đi qua ${D.route_example.before.bans.length} biển cấm, giá tính trên tuyến này.`],["Có lớp biển",`Tuyến né cấm ${D.route_example.after.km} km. Giá và ETA tính trên quãng đường xe thật sự phải chạy.`]],
-  win:"Giá đúng với quãng đường thật: tài xế không chạy lỗ phần đi vòng, khách không bị báo ETA quá sớm.",
+  win:"Giá và ETA đúng quãng đường thật.",
   draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#C62828",weight:6,dashArray:"10 8"}).addTo(UL);L.polyline(R.after.geometry,{color:"#FF7F32",weight:7}).addTo(UL);UM.fitBounds(L.latLngBounds(R.after.geometry.concat(R.before.geometry)).pad(.15))}},
  {stage:"ROUTING",title:"Vùng cấm đã có, biển trên đường thì chưa",tags:REAL+ILL,
-  rows:[["Tình huống","Ngoài giờ cấm vùng, xe tải chạy qua đoạn đường có biển cấm xe tải riêng (Phạm Văn Hai, Hoàng Văn Thụ)."],["Hôm nay","Router chỉ biết vùng cấm theo giờ, không biết biển trên từng đoạn: tuyến đi thẳng qua biển."],["Có lớp biển","Router né đúng đoạn có biển, theo loại xe và giờ ghi trên biển phụ."]],
-  win:"Vùng cấm và biển cấm là hai lớp khác nhau; thiếu lớp biển thì tuyến vẫn phạm luật dù đã né vùng.",
+  rows:[["Tình huống","Xe tải qua đoạn có biển cấm riêng."],["Hôm nay","Router chỉ biết vùng: đi thẳng qua biển."],["Có lớp biển","Né đúng đoạn có biển, theo loại xe và giờ."]],
+  win:"Né vùng chưa đủ, cần né cả biển.",
   draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#C62828",weight:6,dashArray:"10 8"}).addTo(UL).bindTooltip("Chỉ biết vùng: đi qua biển",{permanent:true,direction:"top"});L.polyline(R.after.geometry,{color:"#FF7F32",weight:6}).addTo(UL).bindTooltip("Có lớp biển: né đoạn cấm",{permanent:true,direction:"bottom"});UM.fitBounds(L.latLngBounds(R.after.geometry).pad(.15))}},
  {stage:"DẪN ĐƯỜNG",title:"Tài xế được báo trước biển cấm",tags:REAL,
-  rows:[["Tình huống","Tài xế chạy theo tuyến đã né cấm, đi qua đoạn có biển cấm rẽ, cấm dừng đỗ, hạn chế chiều cao."],["Hôm nay","Tài xế tự nhìn biển, dễ bị phạt khi biển khuất hoặc đường lạ."],["Có lớp biển","Cách biển khoảng 150 m, app hiện chip và đọc to, chỉ báo biển áp cho chiều xe đang chạy."]],
-  win:"Giảm rủi ro bị phạt cho tài xế. Xem bước 7 ở trên: mô phỏng hoặc GPS thật.",
+  rows:[["Tình huống","Tuyến có biển cấm rẽ, cấm đỗ, chiều cao."],["Hôm nay","Tài xế tự nhìn biển."],["Có lớp biển","Cách 150 m: chip + đọc to."]],
+  win:"Tài xế ít bị phạt hơn.",
   draw(){const R=D.route_example.after.geometry;L.polyline(R,{color:"#FF7F32",weight:6}).addTo(UL);signsAlong(R).forEach(e=>L.marker([e.r[0],e.r[1]],{icon:sicon(e.r[3],22)}).addTo(UL));UM.fitBounds(L.latLngBounds(R).pad(.1))}},
  {stage:"DỮ LIỆU",title:"Hai tài xế báo ngược nhau",tags:RULE+ILL,
-  rows:[["Tình huống",`Tài xế A chụp biển ${D.demo[0].qcvn} ${D.demo[0].label} trên ${D.demo[0].edge.name}. Ba ngày sau tài xế B đi qua, không thấy biển.`],["Cách xử lý",`Cần ít nhất ${D.usecase.rules.min_contributors} người độc lập (cách nhau ≥ ${D.usecase.rules.gap_s/60} phút hoặc ≥ ${D.usecase.rules.gap_m} m) mới publish. Khi mâu thuẫn: giữ trạng thái cũ, giao nhiệm vụ chụp xác minh cho tài xế thứ ba đi qua.`],["Kết quả","Router không đổi theo một báo cáo đơn lẻ. Biển đổi trạng thái khi bằng chứng nghiêng hẳn về một phía."]],
-  win:"Một tài xế báo sai, hoặc cố tình báo sai, không làm hỏng tuyến của cả mạng lưới.",
+  rows:[["Tình huống","Tài xế A chụp có biển, B đi qua không thấy."],["Cách xử lý","Cần ≥ 2 người độc lập. Mâu thuẫn thì giao người thứ 3 chụp xác minh."],["Kết quả","Một báo cáo lẻ không làm đổi tuyến."]],
+  win:"Một người báo sai không làm hỏng mạng lưới.",
   draw(){const s=D.demo[0],c=[s.lat,s.lon],o=(a,b)=>[c[0]+a/111320,c[1]+b/109000];
    L.marker(c,{icon:sicon(s.qcvn,34)}).addTo(UL);pin(o(-35,-40),"#1F8A5B","A").addTo(UL).bindTooltip("A: có biển",{permanent:true,direction:"left",offset:[-14,0]});
    pin(o(35,40),"#C62828","B").addTo(UL).bindTooltip("B: không thấy",{permanent:true,direction:"right",offset:[14,0]});
    pin(o(-45,55),"#8A949E","?").addTo(UL).bindTooltip("Nhiệm vụ xác minh cho tài xế thứ 3",{permanent:true,direction:"bottom",offset:[0,14]});UM.setView(c,18)}},
  {stage:"DỮ LIỆU",title:"Biển đã gỡ ngoài thực địa",tags:REAL+RULE,
-  rows:[["Tình huống",`${D.usecase.stale.qcvn} ${D.usecase.stale.label} trên ${D.usecase.stale.road}: chỉ thấy trong ảnh năm ${D.usecase.stale.last_seen.slice(0,4)}, không có ảnh mới.`],["Cách xử lý",`Ảnh cũ hơn 2022 không được publish. Biển đang publish mà ${D.usecase.rules.negative_passes} lượt tài xế đi qua liên tiếp không thấy thì hạ xuống chờ xác minh.`],["Kết quả","Không chặn tuyến vì một biển không còn tồn tại."]],
-  win:"Bản đồ tự làm mới theo thực địa, không cần đội khảo sát đi rà lại.",
+  rows:[["Tình huống",`${D.usecase.stale.label}, ảnh cuối năm ${D.usecase.stale.last_seen.slice(0,4)}.`],[`Cách xử lý`,`${D.usecase.rules.negative_passes} lượt đi qua không thấy biển → hạ xuống.`],["Kết quả","Không chặn tuyến vì biển đã gỡ."]],
+  win:"Bản đồ tự làm mới theo thực địa.",
   draw(){const s=D.usecase.stale;L.marker([s.lat,s.lon],{icon:sicon(s.qcvn,34),opacity:.45}).addTo(UL).bindTooltip(`Thấy lần cuối ${s.last_seen} · giữ lại, không publish`,{permanent:true,direction:"top",offset:[0,-16]});UM.setView([s.lat,s.lon],18)}},
  {stage:"DỮ LIỆU",title:"AI đọc nhầm hoặc chỉ có một ảnh",tags:REAL+RULE,
-  rows:[["Tình huống",`${D.usecase.single.qcvn} ${D.usecase.single.label} trên ${D.usecase.single.road}: mới thấy trong một ảnh (${D.usecase.single.last_seen}).`],["Cách xử lý","Một nguồn chưa đủ: biển nằm ở hàng chờ, không đưa vào router để chặn tuyến. Khi có thêm ảnh độc lập thì tự publish."],["Kết quả",`Toàn lớp: ${fmt(D.held)} biển đang chờ thêm ảnh, ${fmt(D.published)} biển đã qua cổng.`]],
-  win:"Chặn nhầm một con đường còn tốn hơn bỏ sót một biển: giá đội lên và tài xế phải đi vòng vô ích.",
+  rows:[["Tình huống","Mới có một ảnh."],["Cách xử lý","Chờ thêm ảnh độc lập rồi mới publish."],["Kết quả",`${fmt(D.held)} biển đang chờ thêm ảnh.`]],
+  win:"Không chặn nhầm đường vì một ảnh.",
   draw(){const s=D.usecase.single;L.marker([s.lat,s.lon],{icon:sicon(s.qcvn,34),opacity:.6}).addTo(UL).bindTooltip("1 ảnh · chờ thêm bằng chứng",{permanent:true,direction:"top",offset:[0,-16]});UM.setView([s.lat,s.lon],18)}}
 ];
 function ucInit(){
@@ -369,7 +369,7 @@ function ucInit(){
   ucGo(0);
 }
 function ucGo(i){const u=UC[i];[...$("ucflow").children].forEach((b,j)=>b.setAttribute("aria-current",j===i));
-  $("ucpanel").innerHTML=`<h3>${u.title}${u.tags}</h3>${u.rows.map(r=>`<div class="ucrow"><b>${r[0]}</b><span>${r[1]}</span></div>`).join("")}<div class="ucwin"><b>Lợi ích:</b> ${u.win}</div>`;
+  $("ucpanel").innerHTML=`<h3>${u.title}</h3>${u.rows.map(r=>`<div class="ucrow"><b>${r[0]}</b><span>${r[1]}</span></div>`).join("")}<div class="ucwin"><b>Lợi ích:</b> ${u.win}</div>`;
   UL.clearLayers();u.draw()}
 
 function endDrive(){if(SIM){clearInterval(SIM);SIM=null}if(WATCH!=null&&navigator.geolocation){navigator.geolocation.clearWatch(WATCH);WATCH=null}CAR=null;if(window.speechSynthesis)speechSynthesis.cancel()}
