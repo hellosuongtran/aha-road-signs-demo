@@ -2,178 +2,1094 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AHA Road Signs Replay</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AHA Road Signs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--navy:#14213D;--orange:#FF7F32;--orange-ink:#C2531A;--bg:#F4F6F9;--paper:#FFFFFF;--line:#DDE3EA;--body:#33415C;--muted:#6B7A90;--ok:#1F8A5B;--warn:#B7791F;--chip:#14213D}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--navy:#E8EEF6;--bg:#0E1524;--paper:#16203A;--line:#2A3756;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#22305A}}
-:root[data-theme="dark"]{--navy:#E8EEF6;--bg:#0E1524;--paper:#16203A;--line:#2A3756;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#22305A}
-*{box-sizing:border-box;margin:0}
-body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--body);line-height:1.5}
-header{padding:28px 16px 8px;max-width:1240px;margin:auto}
-.eyebrow{color:var(--orange-ink);font-weight:700;letter-spacing:1.5px;font-size:13px}
-h1{color:var(--navy);font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.15;margin:6px 0 8px}
-.sub{max-width:820px;font-size:16px}
-.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:14px}
-.stat b{color:var(--navy);font-size:18px;margin-right:4px}
-main{max-width:1240px;margin:auto;padding:8px 16px 40px}
-.picker{display:flex;gap:10px;overflow-x:auto;padding:12px 2px}
-.pick{flex:0 0 auto;width:112px;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;text-align:center;font:inherit;color:inherit}
-.pick img{width:96px;height:72px;object-fit:contain;border-radius:6px;background:#fff}
-.pick span{display:block;font-size:12px;margin-top:4px;line-height:1.25}
-.pick[aria-pressed="true"]{border-color:var(--orange)}
-.steps{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
-.step{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--body);padding:8px 12px;border-radius:999px;cursor:pointer}
-.step b{color:var(--orange-ink);margin-right:4px}
-.step[aria-current="true"]{background:var(--navy);color:var(--paper);border-color:var(--navy)}
-.step[aria-current="true"] b{color:var(--orange)}
-.ctrl{display:flex;gap:8px;margin-left:auto}
-.btn{font:inherit;font-size:14px;font-weight:600;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;background:var(--orange);color:#14213D}
-.btn.ghost{background:var(--paper);color:var(--navy);border:1px solid var(--line)}
-.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px}
-@media (max-width:860px){.stage{grid-template-columns:1fr}}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;min-height:460px}
-.panel h2{color:var(--navy);font-size:22px;line-height:1.25;margin-bottom:6px}
-.panel .lead{font-size:15px;margin-bottom:14px}
-.photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.photos figure{margin:0}
-.photos img{width:100%;border-radius:10px;display:block}
-figcaption{font-size:12px;color:var(--muted);margin-top:4px}
-.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;margin-top:12px}
-.meta dt{color:var(--muted)}
-.meta dd{color:var(--navy);font-weight:600}
-.read{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
-.read figure{margin:0;text-align:center}
-.read img{max-width:100%;max-height:200px;border-radius:10px;background:#fff}
-.arrow{font-size:28px;color:var(--orange)}
-.verdict{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--bg);font-size:15px}
-.verdict b{color:var(--navy)}
-.gate{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
-.gate li{display:flex;gap:10px;align-items:flex-start;font-size:15px}
-.tick{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700;background:var(--ok)}
-.tick.no{background:var(--warn)}
-.pub{display:inline-block;margin-top:14px;background:var(--ok);color:#fff;font-weight:700;padding:6px 12px;border-radius:999px;font-size:14px}
-.mapbox{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);min-height:460px}
-#map{position:absolute;inset:0;background:#e9edf2}
-#map .leaflet-tile-pane{filter:grayscale(.85) contrast(.95)}
-.phone{position:absolute;right:12px;top:12px;z-index:500;width:210px;display:none;flex-direction:column-reverse;gap:6px}
-.phone.on{display:flex}
-.chip{background:var(--chip);color:#fff;border-radius:12px;padding:8px 10px;display:flex;gap:8px;align-items:center;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.25);animation:pop .35s ease-out both}
-.chip img{width:30px;height:30px;background:#fff;border-radius:50%;object-fit:contain}
-.chip small{display:block;color:#9DB3CC;font-size:11px}
-.chip.hot{outline:2px solid var(--orange)}
-@keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-.legend{position:absolute;left:12px;bottom:12px;z-index:500;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;display:none}
-.legend.on{display:block}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.flow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0;font-size:13px}
-.flow span{background:var(--bg);border-radius:8px;padding:4px 8px}
-footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var(--muted)}
-.fade{animation:pop .3s ease-out both}
+/* Layout: header with two tabs; overview is a scrolling report, directions is a form panel beside a full-height map. */
+:root{--brand:#ff7f32;--navy:#0e4174;--ink:#1d2433;--mute:#667085;--line:#e3e7ee;--bg:#f5f7fa;--panel:#fff;
+--live:#1a9850;--ver:#2563eb;--sub:#94a3b8;--warn:#d97706;--ban:#d00}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);display:flex;flex-direction:column}
+header{background:var(--navy);color:#fff;display:flex;align-items:center;gap:20px;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));flex-wrap:wrap}
+header h1{font-size:16px;margin:12px 0}
+header h1 span{color:var(--brand)}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tabs button{background:transparent;border:0;color:#c9d6ea;font:inherit;font-weight:600;padding:14px 14px 11px;border-bottom:3px solid transparent;cursor:pointer}
+.tabs button.on{color:#fff;border-bottom-color:var(--brand)}
+.tabs button:focus-visible{outline:2px solid #fff}
+main{flex:1;min-height:0}
+.view{display:none;height:100%}.view.on{display:block}
+#overview{overflow:auto;padding:20px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h2{font-size:15px;margin:0 0 4px;color:var(--navy)}
+.card p.lead{margin:0 0 12px;color:var(--mute);font-size:13px}
+.funnels{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.stage{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;margin:8px 0;font-size:13px}
+.bar{height:22px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%}
+.stage b{text-align:right;font-variant-numeric:tabular-nums;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:600;font-size:12px;position:sticky;top:0;background:var(--panel)}
+.tw{overflow:auto;max-height:440px}
+.ico{display:inline-flex;align-items:center;gap:8px}
+.note{font-size:12px;color:var(--mute);margin-top:8px}
+#directions{display:none;grid-template-columns:380px 1fr;height:100%}
+#directions.on{display:grid}
+.side{background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.field label{display:block;font-size:12px;color:var(--mute);margin-bottom:4px;font-weight:600}
+.field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sugg{border:1px solid var(--line);border-radius:8px;margin-top:4px;background:#fff;max-height:180px;overflow:auto}
+.sugg div{padding:7px 10px;cursor:pointer;font-size:13px}.sugg div:hover{background:#f3f6fb}
+.go{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:11px;font:inherit;font-weight:700;cursor:pointer}
+.go:disabled{opacity:.5}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sum div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;color:var(--mute)}
+.sum b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+.alert{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.tag{font-size:11px;font-weight:700;padding:1px 6px;border-radius:99px}
+.tag.no{background:#fde8e8;color:#b42318}.tag.ok{background:#e7f6ec;color:#1a7f37}.tag.chk{background:#fff4e5;color:#b45309}
+#dmap{height:100%;min-height:420px}
+.mapwrap{position:relative;height:100%;min-height:420px}
+.mapwrap [hidden]{display:none!important}
+#directions label.hint{display:flex;gap:8px;align-items:center;text-align:left}
+#dmap .leaflet-tile-pane{filter:grayscale(.9) brightness(1.08) contrast(.88)}
+.hud{position:absolute;left:14px;bottom:70px;z-index:500;display:flex;flex-direction:column-reverse;gap:8px;align-items:flex-start;pointer-events:none;max-height:calc(100% - 90px);overflow:hidden}
+.chip{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(16,24,40,.2);padding:5px 12px 5px 5px;font-size:13px;color:#1d2433;line-height:1.25}
+.chip small{display:block;color:#667085;font-size:11px}
+.chip.hot{box-shadow:0 0 0 2px #d00,0 2px 8px rgba(16,24,40,.2)}
+.chip.speed{width:66px;height:66px;padding:0;border-radius:50%;justify-content:center;border:6px solid #d00;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.chip.speed.unk{border-color:#98a2b3;color:#667085;font-size:13px;font-weight:700}
+.drive{position:absolute;left:14px;right:14px;bottom:14px;z-index:500;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(16,24,40,.2);padding:6px 12px;display:flex;gap:12px;align-items:center;font-size:13px}
+.drive input{flex:1}.drive button{border:0;background:#1f5fd6;color:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px}
+.bub{background:#1f5fd6;color:#fff;border-radius:8px;padding:4px 9px;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(16,24,40,.3);line-height:1.3;transform:translate(-50%,-120%);display:inline-block}
+.bub.alt{background:#fff;color:#1d2433}
+.evl{display:grid;grid-template-columns:30px 54px 1fr;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid var(--line)}
+.hint{font-size:12px;color:var(--mute)}
+.cmp td,.cmp th{font-size:12px;padding:5px 4px}.cmp .sw{display:inline-block;width:14px;height:4px;border-radius:2px;vertical-align:middle;margin-right:4px}
+label.hint{display:flex;gap:6px;align-items:center;margin:2px 0}
+@media(max-width:860px){#directions.on{grid-template-columns:1fr;grid-template-rows:auto 60vh}.side{border-right:0}.stage{grid-template-columns:110px 1fr 56px}}
+
+/* review tab: the former /map page, scoped */
+#review{height:100%}#review.on{display:flex;flex-direction:column}
+#review .rbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:8px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e3e7ee}
+#review .rbar .note{font-size:12px;color:#667085}
+#review .rwrap{flex:1;min-height:0}
+#rmap{height:100%;min-height:360px}
+#review aside select,#review aside input{max-width:100%}#review aside{min-width:0}
+#review{--navy:#14264a;--ink:#1d2433;--mute:#667085;--line:#e3e7ee;--bg:#f6f8fb;--panel:#fff;
+--pub:#1a9850;--rev:#d97706;--rej:#98a2b3;--cam:#111827;--mly:#7c3aed}
+#review *{box-sizing:border-box}
+#review,#review{height:100%;margin:0}
+#review{font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+#review .rbar{background:var(--navy);color:#fff;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+#review .rbar h1{font-size:16px;margin:0;font-weight:600}
+#review .rbar a{color:#c7d6ff;font-size:13px}
+#review .stats{display:flex;gap:12px;font-size:13px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+#review .stats b{font-size:15px}
+#review .rwrap{flex:1;display:grid;grid-template-columns:1fr 340px;min-height:0}
+#review #map{height:100%;min-height:360px}
+#review aside{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:12px 14px}
+#review aside h2{font-size:13px;margin:12px 0 6px;color:var(--navy)}
+#review aside h2:first-child{margin-top:0}
+#review .tog{display:flex;flex-direction:column;gap:4px;font-size:13px}
+#review .tog label{display:flex;gap:6px;align-items:center}
+#review .dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+#review .item{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+#review .item img{width:64px;height:64px;object-fit:cover;border-radius:6px;background:var(--line)}
+#review .item small{color:var(--mute)}
+#review .st{font-weight:600}
+#review .st.published{color:var(--pub)}
+#review .st.pending_review{color:var(--rev)}
+#review .st.rejected{color:var(--rej)}
+#review .pop img{width:240px;max-width:100%;border-radius:6px;display:block;margin-bottom:6px}
+#review .pop table{border-collapse:collapse;font-size:12px;width:100%}
+#review .pop td{border-top:1px solid var(--line);padding:3px 4px;vertical-align:top}
+#review .empty{color:var(--mute);font-size:13px}
+#review .fb{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+#review .fb button,#review #rPick{font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#f3f6fb;cursor:pointer}
+#review .tog input,#review .tog select{font:inherit;font-size:13px}
+#review .lb{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:12px;display:flex;flex-direction:column;gap:4px}
+#review .lb select{font:inherit;font-size:12px;width:100%}
+#review .ok{color:var(--pub)}
+#review .no{color:#d73027}
+#review .ev{font-size:12px;border-collapse:collapse;width:100%}
+#review .ev td{border-top:1px solid var(--line);padding:3px 4px}
+#review .ev td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:800px){#review .rwrap{grid-template-columns:1fr;grid-template-rows:60vh auto}
+#review aside{border-left:0;border-top:1px solid var(--line)}}
+
+/* capture tab: the former driver page, scoped */
+#capture{height:100%;overflow:auto}#capture.on{display:block}
+#capture .cbar{background:#fff;border-bottom:1px solid #e3e7ee;padding:10px 16px;font-weight:600;color:#0e4174}
+.tabs{overflow-x:auto;max-width:100%;min-width:0;flex:1 1 auto;justify-content:flex-end}
+header{min-width:0}
+@media(max-width:600px){.tabs{justify-content:flex-start;margin-left:0}header h1{margin:10px 0 0}}
+#capture *{box-sizing:border-box}#capture main{width:100%}
+.tabs button{white-space:nowrap}
+#capture{box-sizing:border-box}
+#capture{margin:0;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#1d2433;background:#f6f8fb}
+#capture .cbar{background:#14264a;color:#fff;padding:12px 16px;font-weight:600}
+#capture main{padding:12px 16px;max-width:560px;margin:0 auto}
+#capture label{display:block;font-size:13px;color:#667085;margin:10px 0 4px}
+#capture select,#capture input[type=text]{width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:8px;font:inherit;background:#fff}
+#capture button{width:100%;padding:13px;border:0;border-radius:8px;font:inherit;font-weight:600;margin-top:10px}
+#capture .primary{background:#2563eb;color:#fff}
+#capture .ghost{background:#e8eefc;color:#14264a}
+#capture button:disabled{opacity:.45}
+#capture .read{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#capture .read div{background:#fff;border:1px solid #e3e7ee;border-radius:8px;padding:8px 10px;font-size:13px;color:#667085}
+#capture .read b{display:block;font-size:16px;color:#14264a}
+#capture #preview{width:100%;border-radius:8px;margin-top:10px;display:none}
+#capture #cmap{height:320px;border-radius:8px;margin-top:10px;display:none}
+#capture #result{background:#fff;border:1px solid #e3e7ee;border-radius:8px;padding:10px 12px;margin-top:10px;display:none;font-size:14px}
+#capture .published{color:#1a9850}
+#capture .pending_review{color:#b45309}
+#capture .rejected{color:#d73027}
+#capture .warn{font-size:13px;color:#b45309;margin-top:8px}
+
 </style>
+<script>(function(){
+  const of = window.fetch.bind(window);
+  let MAN = null;
+  const man = () => MAN || (MAN = of('api/manifest.json').then(r => r.json()));
+  const resp = (obj, status = 200) => new Response(JSON.stringify(obj), {status, headers: {'Content-Type': 'application/json'}});
+  const fname = (p, q) => { let n = p.replace('/v1/', '').replace(/\//g, '_'); if (q) n += '__' + q.replace(/=/g, '-').replace(/&/g, '_'); return n + '.json'; };
+  function same(a, sp){
+    for (const k of Object.keys(a)){
+      const x = a[k], y = sp.get(k); if (y == null) return false;
+      if (k === 'depart' || k === 'profile'){ if (x !== y) return false; continue; }
+      if (Math.abs(+x - +y) > 1e-6) return false;
+    }
+    return true;
+  }
+  window.fetch = async function(u, opt){
+    const s = typeof u === 'string' ? u : u.url;
+    if (!s.startsWith('/v1/')) return of(u, opt);
+    if (opt && opt.method && opt.method !== 'GET') return resp({detail: 'Bản trên GitHub Pages chỉ để xem, không gửi được. Upload ảnh và gắn nhãn cần chạy console local.'}, 503);
+    const [p, q = ''] = s.split('?');
+    if (p === '/v1/geocode') return resp([]);
+    if (p === '/v1/nav' || p === '/v1/trip/compare'){
+      const m = await man(), sp = new URLSearchParams(q), kind = p === '/v1/nav' ? 'nav' : 'compare';
+      const e = m.entries.find(x => x.kind === kind && same(x.params, sp));
+      if (!e) return resp({detail: 'Bản trên GitHub Pages chỉ có các tuyến mẫu tính sẵn: chọn ở ô "Tuyến mẫu". Tuyến bất kỳ cần chạy console local.'}, 404);
+      return of('api/' + e.file);
+    }
+    if (p === '/v1/route' || p === '/v1/trip' || p === '/v1/edges/near') return resp({detail: 'Cần chạy console local.'}, 404);
+    const r = await of('api/' + fname(p, q));
+    return r.ok ? r : resp({detail: 'Bản trên GitHub Pages chưa có dữ liệu này.'}, 404);
+  };
+  document.addEventListener('DOMContentLoaded', async () => {
+    const $ = id => document.getElementById(id);
+    const bar = document.createElement('div');
+    bar.style.cssText = 'background:#14213D;color:#F7F8FA;font-size:13px;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center';
+    bar.innerHTML = '<span>Bản xem trên GitHub Pages: dữ liệu chụp sẵn, dẫn đường dùng tuyến mẫu, chưa upload được ảnh.</span><a href="replay/" style="color:#FF7F32;font-weight:700">Xem luồng từ ảnh đến bản đồ →</a>';
+    document.body.prepend(bar);
+    const nav = document.querySelector('nav.tabs');
+    if (nav){ const a = document.createElement('a'); a.href = 'replay/'; a.textContent = 'Luồng ảnh → bản đồ'; a.style.cssText = 'align-self:center;font-weight:700;color:#C2531A;text-decoration:none;padding:0 10px'; nav.appendChild(a); }
+    const cap = $('capture');
+    if (cap){ const c = document.createElement('div'); c.style.cssText = 'margin:12px;padding:12px 14px;border-radius:10px;background:#FFF3EA;color:#14213D;font-size:14px';
+      c.innerHTML = 'Trên bản GitHub Pages không gửi được ảnh vì cần server và AI đọc biển. Xem lại toàn bộ luồng trên biển thật ở <a href="replay/" style="color:#C2531A;font-weight:700">trang chạy lại luồng</a>.'; cap.prepend(c); }
+    const m = await man();
+    const side = document.querySelector('#directions .side');
+    if (!side) return;
+    const f = document.createElement('div'); f.className = 'field';
+    const opts = m.entries.filter(e => e.kind === 'nav').map((e, i) => `<option value="${i}">${e.name} · ${e.params.profile} · ${e.params.depart}</option>`).join('');
+    f.innerHTML = `<label for="preset">Tuyến mẫu (tính sẵn)</label><select id="preset"><option value="">Chọn tuyến</option>${opts}</select>`;
+    side.prepend(f);
+    ['qFrom', 'qTo'].forEach(id => { if ($(id)) $(id).placeholder = 'Bản GitHub Pages: chọn tuyến mẫu ở trên'; });
+    $('preset').onchange = e => {
+      const x = m.entries.filter(y => y.kind === 'nav')[+e.target.value]; if (!x) return;
+      const p = x.params; initMap();
+      $('veh').value = p.profile; $('veh').onchange(); $('dep').value = p.depart;
+      const [na, nb] = x.name.split(' → ');
+      setPoint('from', +p.from_lat, +p.from_lon, na); setPoint('to', +p.to_lat, +p.to_lon, nb);
+      $('go').click();
+    };
+    const pre = new URLSearchParams(location.search).get('preset');
+    if (pre !== null && location.hash.startsWith('#directions')) setTimeout(() => { $('preset').value = pre; $('preset').onchange({target: $('preset')}); }, 800);
+  });
+})();
+</script>
 </head>
 <body>
 <header>
-<p class="eyebrow">AI SHOWCASE · AHAMOVE MAP &amp; ROUTING</p>
-<h1>Từ ảnh tài xế chụp đến biển báo trên bản đồ dẫn đường</h1>
-<p class="sub">Chạy lại từng bước trên biển thật ở trung tâm TP.HCM: ảnh đường phố có vị trí và hướng, AI đọc biển theo bảng QCVN 41, gộp các lần thấy thành một biển, gắn vào đúng đoạn đường và chiều xe chạy, qua cổng kiểm tra rồi hiện lên bản đồ. Không có bước nào làm tay.</p>
-<div class="stats" id="stats"></div>
+  <h1>AHA <span>Road Signs</span></h1>
+  <nav class="tabs" role="tablist">
+    <button id="tOverview" class="on" role="tab">Tổng quan biển báo</button>
+    <button id="tDirections" role="tab">Dẫn đường xe tải</button>
+    <button id="tReview" role="tab">Ảnh và kiểm định</button>
+    <button id="tCapture" role="tab">Tài xế gửi biển</button>
+  </nav>
 </header>
 <main>
-<div class="picker" id="picker" role="group" aria-label="Chọn biển để xem"></div>
-<div class="steps" id="steps"></div>
-<div class="stage">
-<section class="panel" id="panel" aria-live="polite"></section>
-<div class="mapbox"><div id="map"></div><div class="phone" id="phone"></div>
-<div class="legend" id="legend"></div></div>
+  <section id="overview" class="view on">
+    <div class="wrap">
+      <div class="card"><h2>Lớp biển tự động</h2><p class="lead">Gộp lượt phát hiện thành biển, tự phân loại theo QCVN, tự gắn vào cạnh đường có hướng. Không bước nào cần người xử lý tay; biển chưa đủ bằng chứng được giữ chờ thêm ảnh.</p><div id="autoBox" class="note">Đang tải.</div><div class="tw" id="autoKinds"></div></div>
+      <div class="funnels">
+        <div class="card"><h2>Biển do tài xế và người dùng gửi</h2><p class="lead">Từ ảnh gửi lên tới biển đang dùng cho routing.</p><div id="fContrib"></div></div>
+        <div class="card"><h2>Biển từ Mapillary, vùng trung tâm</h2><p class="lead">Nguồn tham chiếu bên thứ ba, đã snap vào đường bằng OSRM.</p><div id="fMly"></div></div>
+      </div>
+      <div class="card"><h2>Độ phủ biển báo</h2><p class="lead">Phần km đường xe tải đã có người đi qua trong 90 ngày, và chỉ số dừng = số biển đã thấy chia cho ước lượng tổng số biển.</p><div id="covBox" class="note">Đang tải.</div><div class="tw" id="covCells"></div></div>
+      <div class="card"><h2>Số biển theo loại</h2><p class="lead">Đã xác minh là snap vào một edge có hướng với confidence từ 0,6. Đang áp dụng là loại biển routing dùng được mà không cần đọc giá trị trên biển.</p><div class="tw" id="byClass"></div></div>
+      <div class="card"><h2>Các con đường có biển</h2><p class="lead">Biển đã xác minh, gộp theo tên đường OSRM trả về.</p><div class="tw" id="roads"></div></div>
+    </div>
+  </section>
+  <section id="directions" class="view">
+    <div class="side">
+      <div class="field"><label for="qFrom">Điểm nhận hàng</label><input id="qFrom" placeholder="Gõ tên địa điểm hoặc bấm trên bản đồ" autocomplete="off"><div class="sugg" id="sFrom" hidden></div></div>
+      <div class="field"><label for="qTo">Điểm giao hàng</label><input id="qTo" placeholder="Gõ tên địa điểm hoặc bấm trên bản đồ" autocomplete="off"><div class="sugg" id="sTo" hidden></div></div>
+      <div class="field"><label for="veh">Loại xe</label>
+        <select id="veh"><option>Đang tải</option></select></div>
+      <div class="row2">
+        <div class="field"><label for="wkg">Tải trọng (kg)</label><input id="wkg" type="number" value="1000"></div>
+        <div class="field"><label for="hm">Chiều cao (m)</label><input id="hm" type="number" step="0.1" value="2.5"></div>
+      </div>
+      <div class="field"><label for="dep">Giờ khởi hành</label><input id="dep" type="time" value="07:30"></div>
+      <button class="go" id="go" disabled>Tìm đường</button>
+      <button class="go" id="cmp" disabled style="background:#0e4174">So sánh 4 mức dữ liệu biển</button>
+      <div class="field"><label for="demoSel">Chuyến minh hoạ lớp tài xế (mô phỏng)</label><select id="demoSel"><option value="">Đang tải</option></select></div>
+      <div class="field"><label>Lớp biển trên bản đồ</label>
+        <label class="hint"><input type="checkbox" class="lay" value="mapillary" checked> Mapillary (thật)</label>
+        <label class="hint"><input type="checkbox" class="lay" value="driver_high" checked> Tài xế, điểm cao (mô phỏng)</label>
+        <label class="hint"><input type="checkbox" class="lay" value="driver_med" checked> Tài xế, điểm trung bình (mô phỏng)</label>
+        <label class="hint"><input type="checkbox" class="lay" value="truth_sim"> Biển thật bị ẩn khỏi lớp Mapillary</label></div>
+      <p class="hint">Chiều cao mặc định theo loại xe là ước lượng, chỉnh lại nếu biết. Biển hạn chế chiều cao chưa đọc được con số nên chỉ cảnh báo, chưa chặn.</p>
+      <div id="out"></div>
+    </div>
+    <div class="mapwrap"><div id="dmap"></div>
+      <div class="hud" id="hud" hidden aria-live="polite"></div>
+      <div class="drive" id="drive" hidden><button id="play" aria-label="Chạy thử">▶</button><input id="pos" type="range" min="0" max="1000" value="0" aria-label="Vị trí trên tuyến"><span id="posTxt"></span></div>
+    </div>
+  </section>
+  <section id="review" class="view">
+
+<div class="rbar"><div class="stats" id="stats"></div><span class="note">Ảnh tài xế gửi, gắn nhãn đáp án, phản hồi và kiểm định accuracy</span></div>
+<div class="rwrap">
+  <div id="rmap"></div>
+  <aside>
+    <h2>Lớp hiển thị</h2>
+    <div class="tog">
+      <label><input type="checkbox" id="tCam" checked> Vị trí chụp và hướng camera</label>
+      <label><input type="checkbox" id="tSign" checked> Biển ước lượng và edge đã snap</label>
+      <label><input type="checkbox" id="tCluster" checked> Biển sau khi gộp (publish hoặc chờ duyệt)</label>
+      <label><input type="checkbox" id="tRoad" checked> Biển trên đường thật (OSRM) và đoạn bị cấm</label>
+      <label><input type="checkbox" id="tAuto"> Lớp biển tự động (đã publish)</label>
+      <label><input type="checkbox" id="tAutoHeld"> Lớp biển tự động (đang giữ)</label>
+      <label><input type="checkbox" id="tMly"> Biển Mapillary (tham chiếu, vùng trung tâm)</label>
+      <label><input type="checkbox" id="tCov"> Độ phủ theo ô H3 (km đường xe tải đã đi qua)</label>
+    </div>
+    <h2>Trạng thái</h2>
+    <div class="tog">
+      <label><input type="checkbox" class="fs" value="published" checked><i class="dot" style="background:var(--pub)"></i> Đã publish</label>
+      <label><input type="checkbox" class="fs" value="pending_review" checked><i class="dot" style="background:var(--rev)"></i> Chờ duyệt</label>
+      <label><input type="checkbox" class="fs" value="rejected" checked><i class="dot" style="background:var(--rej)"></i> Bị loại</label>
+    </div>
+    <h2>Chuyến đi thật của tài xế</h2>
+    <div class="tog">
+      <label>Chọn chuyến <select id="tripSel"><option value="">Đang tải</option></select></label>
+      <label>Giờ chạy thử <input id="tripT" placeholder="giờ đặt đơn" size="6"> <small>để trống là dùng giờ đặt thật; thử 07:30 để thấy khung cấm tải</small></label>
+      <small class="empty">Điểm lấy và điểm giao của đơn Truck hoàn thành 03/11 tới 14/11, làm tròn ô khoảng 110 m.</small>
+      <div id="tripOut" class="empty"></div>
+    </div>
+    <h2>Accuracy trên ảnh thật đã gắn nhãn</h2>
+    <div id="evalBox" class="empty">Đang tải.</div>
+    <div id="labelBox" hidden>
+      <h2>Gắn nhãn ảnh <span id="lbId"></span></h2>
+      <img id="lbImg" alt="Ảnh đang gắn nhãn" style="width:100%;border-radius:6px">
+      <div id="lbSigns"></div>
+      <div class="fb"><button id="lbMissed" type="button">Thêm biển bị bỏ sót</button><button id="lbClose" type="button">Đóng</button></div>
+      <small class="empty" id="lbHint"></small>
+    </div>
+    <h2>Tài xế dùng bản đồ</h2>
+    <div class="tog">
+      <label>Bạn phản hồi với vai trò
+        <select id="fbGroup"><option value="driver">Tài xế</option><option value="staff">Nhân viên</option><option value="end_user">Người dùng</option></select></label>
+      <label>Mã người phản hồi <input id="fbId" value="driver_demo" size="12"></label>
+      <small class="empty">Bấm một vòng tròn biển trên bản đồ để xác nhận hoặc báo sai.</small>
+    </div>
+    <h2>Route xe tải</h2>
+    <div class="tog">
+      <label>Tải trọng (kg) <input id="rW" type="number" value="5000" style="width:80px"></label>
+      <label>Chiều cao (m) <input id="rH" type="number" value="3.3" step="0.1" style="width:80px"></label>
+      <label>Giờ khởi hành <input id="rT" value="07:30" size="5"></label>
+      <button id="rPick" type="button">Chọn điểm đi rồi điểm đến trên bản đồ</button>
+      <div id="rOut" class="empty"></div>
+    </div>
+    <h2>Contribution mới nhất</h2>
+    <div id="list"><p class="empty">Đang tải.</p></div>
+  </aside>
 </div>
+
+  </section>
+  <section id="capture" class="view">
+
+<div class="cbar">Gửi ảnh biển cấm: chụp, hệ thống tự đọc GPS và hướng la bàn</div>
+<main>
+  <div class="read">
+    <div>Vị trí<b id="rPos">chưa có</b></div>
+    <div>GPS accuracy<b id="rAcc">chưa có</b></div>
+    <div>Heading<b id="rHead">chưa có</b></div>
+    <div>Nguồn heading<b id="rSrc">chưa bật</b></div>
+  </div>
+  <button class="ghost" id="btnSensors">Bật GPS và la bàn</button>
+  <div class="warn" id="warn"></div>
+  <button class="ghost" id="btnDrive">Bật chế độ đang chạy</button>
+  <div class="warn" id="driveInfo" style="color:#667085">Chế độ đang chạy ghi lại đoạn đường bạn đi qua, kể cả khi không chụp, để biết đoạn nào đã được kiểm.</div>
+
+  <label for="method">Capture method</label>
+  <select id="method">
+    <option value="phone_manual">Điện thoại cầm tay, chụp khi đã đỗ xe</option>
+    <option value="phone_mount">Điện thoại gắn mount, chụp khi đang chạy</option>
+    <option value="dashcam">Dashcam</option>
+  </select>
+  <label for="group">Contributor group</label>
+  <select id="group">
+    <option value="driver">Tài xế</option>
+    <option value="end_user">End user</option>
+    <option value="staff">Nhân viên nội bộ</option>
+  </select>
+  <label for="cls">Loại biển</label>
+  <select id="cls">
+    <option value="">Để server tự detect</option>
+    <option value="truck_ban">Cấm xe tải</option>
+    <option value="max_weight">Giới hạn tải trọng</option>
+    <option value="max_height">Giới hạn chiều cao</option>
+    <option value="no_entry">Cấm đi ngược chiều</option>
+    <option value="no_left_turn">Cấm rẽ trái</option>
+    <option value="no_right_turn">Cấm rẽ phải</option>
+    <option value="no_u_turn">Cấm quay đầu</option>
+    <option value="no_parking">Cấm đỗ xe</option>
+  </select>
+  <label for="cid">Contributor id</label>
+  <input type="text" id="cid">
+
+  <input type="file" id="file" accept="image/*" capture="environment" hidden>
+  <button class="primary" id="btnShoot">Chụp ảnh biển</button>
+  <img id="preview" alt="Ảnh vừa chụp">
+  <button class="primary" id="btnSend" disabled>Gửi contribution</button>
+  <input type="file" id="gallery" accept="image/*" multiple hidden>
+  <button class="primary" id="btnGallery" style="background:#0e4174">Gửi ảnh đã chụp (chọn từ thư viện)</button>
+  <p class="warn">Gửi ảnh gốc, bật Vị trí cho Camera khi chụp: vị trí, hướng và giờ chụp được đọc từ ảnh. Ảnh qua Zalo hoặc Messenger thường mất các thông tin này.</p>
+  <div id="galleryOut"></div>
+
+  <div id="result"></div>
+  <div id="cmap"></div>
 </main>
-<footer>Ảnh và vị trí phát hiện biển: © Mapillary contributors, CC BY-SA 4.0. Hình biển mẫu: QCVN 41 (Wikimedia Commons, PD-VietnamGov). Nền bản đồ: © OpenStreetMap contributors. Trang này là bản chạy lại từ dữ liệu đã xử lý sẵn; ảnh tài xế Ahamove sẽ đi qua đúng các bước này.</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  </section>
+</main>
 <script>
-const KIND={vehicle_ban:["Cấm phương tiện","#C2531A"],turn_ban:["Cấm rẽ","#2B6CB0"],no_stop_park:["Cấm dừng / đỗ","#7B61FF"],speed_sign:["Tốc độ","#1F8A5B"],road_closed:["Đường đóng","#9B2C2C"]};
-const STEPS=["Tài xế chụp","AI đọc biển","Gộp lần thấy","Gắn đường + kiểm","Lên bản đồ"];
-let D,cur=0,step=0,timer=null,map,lay,layer;
-const $=id=>document.getElementById(id);
-const fmt=n=>n.toLocaleString("vi-VN");
-const dest=(lat,lon,brg,m)=>{const r=brg*Math.PI/180;return[lat+m*Math.cos(r)/111320,lon+m*Math.sin(r)/(111320*Math.cos(lat*Math.PI/180))]};
+function initCapture(){
 
-fetch("data.json").then(r=>r.json()).then(d=>{D=d;init()});
+const $ = id => document.getElementById(id);
+const S = {lat: null, lon: null, acc: null, heading: null, src: null, shot: null, file: null, trail: []};
+$('cid').value = localStorage.getItem('rs_cid') || ('web_' + Math.random().toString(36).slice(2, 10));
+$('cid').onchange = () => localStorage.setItem('rs_cid', $('cid').value);
+localStorage.setItem('rs_cid', $('cid').value);
 
-function init(){
-  $("stats").innerHTML=`<div class="stat"><b>${fmt(D.total)}</b>biển gộp được tự động</div><div class="stat"><b>${fmt(D.published)}</b>biển qua cổng, đã publish</div><div class="stat"><b>${fmt(D.held)}</b>biển giữ lại chờ thêm ảnh</div>`;
-  $("picker").innerHTML=D.demo.map((s,i)=>`<button class="pick" data-i="${i}" aria-pressed="${i===0}"><img src="${s.crop}" alt="${s.label}"><span>${s.label}<br>${s.edge.name}</span></button>`).join("");
-  $("picker").onclick=e=>{const b=e.target.closest(".pick");if(b){stop();cur=+b.dataset.i;[...$("picker").children].forEach((x,j)=>x.setAttribute("aria-pressed",j===cur));go(0)}};
-  $("steps").innerHTML=STEPS.map((t,i)=>`<button class="step" data-i="${i}"><b>${i+1}</b>${t}</button>`).join("")+`<div class="ctrl"><button class="btn ghost" id="prev">‹ Lùi</button><button class="btn" id="play">▶ Chạy cả luồng</button><button class="btn ghost" id="next">Tiếp ›</button></div>`;
-  $("steps").onclick=e=>{const b=e.target.closest(".step");if(b){stop();go(+b.dataset.i)}};
-  $("prev").onclick=()=>{stop();go(Math.max(0,step-1))};
-  $("next").onclick=()=>{stop();go(Math.min(4,step+1))};
-  $("play").onclick=()=>{if(timer){stop();return}go(0);$("play").textContent="❚❚ Dừng";timer=setInterval(()=>{if(step>=4){stop();return}go(step+1)},4500)};
-  map=L.map("map",{zoomControl:true,attributionControl:true}).setView([10.78,106.69],14);
-  L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{maxZoom:20,attribution:"© OpenStreetMap contributors · © Mapillary"}).addTo(map);
-  lay=L.layerGroup().addTo(map);
-  const cv=L.canvas({padding:.3});
-  layer=L.layerGroup(D.layer.map(r=>L.circleMarker([r[0],r[1]],{renderer:cv,radius:3,weight:0,fillOpacity:.75,fillColor:(KIND[r[2]]||["","#555"])[1]})));
-  $("legend").innerHTML=Object.values(KIND).map(([t,c])=>`<div><i style="background:${c}"></i>${t}</div>`).join("");
-  const q=new URLSearchParams(location.search);
-  if(q.get("theme"))document.documentElement.dataset.theme=q.get("theme");
-  cur=Math.min(D.demo.length-1,Math.max(0,+(q.get("sign")||1)-1));[...$("picker").children].forEach((x,j)=>x.setAttribute("aria-pressed",j===cur));
-  go(Math.min(4,Math.max(0,+(q.get("step")||1)-1)));
+function show(){
+  $('rPos').textContent = S.lat == null ? 'chưa có' : S.lat.toFixed(6) + ', ' + S.lon.toFixed(6);
+  $('rAcc').textContent = S.acc == null ? 'chưa có' : S.acc.toFixed(1) + ' m';
+  $('rHead').textContent = S.heading == null ? 'chưa có' : S.heading.toFixed(0) + ' độ';
+  $('rSrc').textContent = S.src || 'chưa bật';
 }
-function stop(){if(timer){clearInterval(timer);timer=null;$("play").textContent="▶ Chạy cả luồng"}}
-
-function go(i){
-  step=i;const s=D.demo[cur];
-  [...document.querySelectorAll(".step")].forEach((b,j)=>b.setAttribute("aria-current",j===i));
-  lay.clearLayers();map.removeLayer(layer);$("phone").classList.remove("on");$("legend").classList.remove("on");
-  const P=$("panel");P.classList.remove("fade");void P.offsetWidth;P.classList.add("fade");
-  const sign=L.circleMarker([s.lat,s.lon],{radius:9,color:"#fff",weight:3,fillColor:"#FF7F32",fillOpacity:1});
-  if(i===0){
-    P.innerHTML=`<h2>1 · Tài xế chụp, về nhà upload</h2><p class="lead">Ảnh gốc giữ GPS, giờ chụp và hướng camera. Hệ thống đọc các thông tin này từ ảnh, tài xế không phải nhập gì. Ảnh mẫu ở đây lấy từ Mapillary; ảnh tài xế Ahamove đi đúng luồng này.</p>
-    <div class="photos">${s.photos.map((p,k)=>`<figure><img src="${p.file}" alt="Ảnh đường phố ${k+1}"><figcaption>Ảnh ${k+1} · hướng camera ${Math.round(p.compass)}°</figcaption></figure>`).join("")}</div>
-    <dl class="meta"><dt>Đường</dt><dd>${s.edge.name||"(chưa có tên)"}</dd><dt>Số lần biển được thấy</dt><dd>${s.n} lần, ${s.days} ngày chụp khác nhau</dd><dt>Khoảng thời gian</dt><dd>${s.first_seen} → ${s.last_seen}</dd></dl>`;
-    map.setView([s.lat,s.lon],17);sign.addTo(lay);
-  }else if(i===1){
-    P.innerHTML=`<h2>2 · AI đọc biển, đối chiếu bảng QCVN 41</h2><p class="lead">Cắt vùng có biển trong ảnh, so với 120 hình biển mẫu của QCVN 41 (biển cấm, hiệu lệnh, chỉ dẫn, biển phụ) để ra mã biển chính thức.</p>
-    <div class="read"><figure><img src="${s.crop}" alt="Biển cắt từ ảnh"><figcaption>Vùng cắt từ ảnh</figcaption></figure><span class="arrow">→</span><figure><img src="${s.ref}" alt="Hình mẫu ${s.qcvn}"><figcaption>Hình mẫu QCVN ${s.qcvn}</figcaption></figure></div>
-    <div class="verdict">Kết quả: <b>${s.qcvn} · ${s.label}</b> · độ chắc: <b>${s.conf==="high"?"cao":s.conf}</b><br>Nhóm hiển thị khi dẫn đường: <b>${KIND[s.kind][0]}</b></div>`;
-    map.setView([s.lat,s.lon],18);sign.addTo(lay);
-  }else if(i===2){
-    P.innerHTML=`<h2>3 · Gộp nhiều lần thấy thành một biển</h2><p class="lead">Các lần phát hiện cùng mã biển, cùng hướng (lệch ≤ 45°) và cách nhau ≤ 20 m được gộp thành một biển duy nhất, lấy vị trí trung bình.</p>
-    <div class="verdict"><b>${s.members.length} lần phát hiện</b> (chấm nhỏ trên bản đồ) → <b>1 biển</b> (chấm cam)</div>
-    <dl class="meta">${s.members.map((m,k)=>`<dt>Lần ${k+1}</dt><dd>${m.first_seen}${m.last_seen&&m.last_seen!==m.first_seen?" → "+m.last_seen:""}</dd>`).join("")}</dl>`;
-    map.setView([s.lat,s.lon],20);
-    L.circle([s.lat,s.lon],{radius:20,color:"#FF7F32",weight:1.5,dashArray:"4 4",fillOpacity:.06}).addTo(lay);
-    s.members.forEach(m=>L.circleMarker([m.lat,m.lon],{radius:5,color:"#14213D",weight:1.5,fillColor:"#9DB3CC",fillOpacity:1}).addTo(lay));
-    sign.addTo(lay);
-  }else if(i===3){
-    const conf=s.edge.confidence,okc=conf>=.6,ok2=s.n>=2||s.days>=2,okd=(s.last_seen||"")>="2022-01-01";
-    P.innerHTML=`<h2>4 · Gắn vào đoạn đường, chiều xe chạy, rồi kiểm</h2><p class="lead">Biển quay mặt về phía xe mà nó áp dụng, nên chiều xe chạy = hướng mặt biển + 180°. Biển được gắn vào đoạn đường gần nhất cùng chiều đó.</p>
-    <dl class="meta"><dt>Đoạn đường</dt><dd>${s.edge.name||"(chưa có tên)"}</dd><dt>Chiều xe chạy</dt><dd>${s.travel}° (mũi tên trên bản đồ)</dd><dt>Độ tin khi gắn</dt><dd>${conf.toFixed(2)}</dd></dl>
-    <ul class="gate"><li><span class="tick ${ok2?"":"no"}">${ok2?"✓":"!"}</span>Thấy độc lập từ 2 lần trở lên (${s.n} lần, ${s.days} ngày)</li>
-    <li><span class="tick ${okd?"":"no"}">${okd?"✓":"!"}</span>Lần thấy gần nhất từ 2022 trở đi (${s.last_seen})</li>
-    <li><span class="tick ${okc?"":"no"}">${okc?"✓":"!"}</span>Độ tin gắn đường ≥ 0,6 (${conf.toFixed(2)})</li></ul>
-    <span class="pub">${s.status==="published"?"Đạt cổng · tự publish":"Giữ lại chờ thêm ảnh"}</span>`;
-    const g=s.edge.geometry;map.fitBounds(L.latLngBounds(g.concat([[s.lat,s.lon]])).pad(.6),{maxZoom:19});
-    L.polyline(g,{color:"#FF7F32",weight:8,opacity:.85}).addTo(lay);
-    const a=dest(s.lat,s.lon,s.travel,-18),b=dest(s.lat,s.lon,s.travel,22);
-    L.polyline([a,b],{color:"#14213D",weight:4}).addTo(lay);
-    L.polygon([dest(b[0],b[1],s.travel,6),dest(b[0],b[1],s.travel+90,4),dest(b[0],b[1],s.travel-90,4)],{color:"#14213D",fillColor:"#14213D",fillOpacity:1,weight:1}).addTo(lay);
-    sign.addTo(lay);
-  }else{
-    P.innerHTML=`<h2>5 · Lên bản đồ và vào tuyến dẫn đường</h2><p class="lead">Biển đã publish nằm trong lớp biển của Ahamove (${fmt(D.published)} biển ở vùng trung tâm). Router đọc lớp này để né đường cấm theo loại xe và giờ cấm; màn dẫn đường báo trước biển sắp tới.</p>
-    <div class="flow"><span>Ảnh</span>→<span>Mã QCVN</span>→<span>1 biển</span>→<span>Đoạn đường + chiều</span>→<span>Router + chip</span></div>
-    <div class="verdict">Góc phải bản đồ: chip báo biển sắp tới như trên màn dẫn đường (minh hoạ). Chấm màu là các biển đã publish, theo nhóm.</div>`;
-    map.setView([s.lat,s.lon],14);layer.addTo(map);sign.addTo(lay);$("legend").classList.add("on");
-    $("phone").innerHTML=`<div class="chip hot"><img src="${s.ref}" alt=""><div>${s.label}<small>Biển sắp tới · ${s.edge.name||""}</small></div></div>`;
-    $("phone").classList.add("on");
+// Heading of the back camera for a phone held upright, from the W3C DeviceOrientation worked example.
+function cameraHeading(alpha, beta, gamma){
+  const r = Math.PI / 180, cA = Math.cos(alpha * r), sA = Math.sin(alpha * r), sB = Math.sin(beta * r), cG = Math.cos(gamma * r), sG = Math.sin(gamma * r);
+  const vx = -cA * sG - sA * sB * cG, vy = -sA * sG + cA * sB * cG;
+  let h = Math.atan(vx / vy);
+  if (vy < 0) h += Math.PI; else if (vx < 0) h += 2 * Math.PI;
+  return h / r;
+}
+function onOrient(e){
+  if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)){
+    S.heading = e.webkitCompassHeading; S.src = 'webkitCompassHeading';
+  } else if (e.absolute && e.alpha != null){
+    S.heading = cameraHeading(e.alpha, e.beta, e.gamma); S.src = 'deviceorientationabsolute';
+  } else return;
+  show();
+}
+async function startSensors(){
+  $('warn').textContent = '';
+  if (!window.isSecureContext) $('warn').textContent = 'Trang không chạy trên HTTPS hoặc localhost nên trình duyệt chặn GPS và la bàn.';
+  if (navigator.geolocation) navigator.geolocation.watchPosition(p => {
+    S.lat = p.coords.latitude; S.lon = p.coords.longitude; S.acc = p.coords.accuracy;
+    // keep the last 30 s of fixes: the server map-matches them to learn which carriageway the driver was on
+    const now = Date.now(); S.trail.push({lat: S.lat, lon: S.lon, acc: Math.round(S.acc), t: now}); S.trail = S.trail.filter(x => now - x.t <= 30000);
+    // GPS course is the heading source while driving; compass keeps priority when the phone stands still
+    if (p.coords.heading != null && !isNaN(p.coords.heading) && (p.coords.speed || 0) > 2 && $('method').value !== 'phone_manual'){ S.heading = p.coords.heading; S.src = 'GPS course'; }
+    show();
+  }, err => { $('warn').textContent = 'GPS lỗi: ' + err.message; }, {enableHighAccuracy: true, maximumAge: 0, timeout: 20000});
+  else $('warn').textContent = 'Trình duyệt không có Geolocation API.';
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      const res = await DeviceOrientationEvent.requestPermission();   // iOS 13+: must come from a tap
+      if (res !== 'granted'){ $('warn').textContent = 'iOS từ chối quyền la bàn. Contribution vẫn gửi được nhưng thiếu heading.'; return; }
+      window.addEventListener('deviceorientation', onOrient, true);
+    } else if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', onOrient, true);
+    else window.addEventListener('deviceorientation', onOrient, true);
+  } catch (e){ $('warn').textContent = 'Không bật được la bàn: ' + e.message; }
+}
+$('btnSensors').onclick = startSensors;
+let driving = false, driveBuf = [], driveSent = 0;
+$('btnDrive').onclick = () => {
+  driving = !driving; $('btnDrive').textContent = driving ? 'Tắt chế độ đang chạy' : 'Bật chế độ đang chạy';
+  if (driving && S.lat == null) startSensors();
+};
+setInterval(async () => {  // every 30 s while driving, send the fixes since the last batch
+  if (!driving) return;
+  const now = Date.now(); const pts = S.trail.filter(x => !driveBuf.length || x.t > driveBuf[driveBuf.length - 1].t);
+  driveBuf = driveBuf.concat(pts).filter(x => now - x.t < 60000);
+  if (driveBuf.length < 4) return;
+  try {
+    const r = await fetch('/v1/passes', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({points: driveBuf, contributor_group: $('group').value, contributor_id: $('cid').value || 'anon'})});
+    const j = await r.json(); driveSent += j.edges_observed || 0;
+    $('driveInfo').textContent = `Đã ghi ${driveSent} đoạn đường đi qua.`; driveBuf = driveBuf.slice(-1);
+  } catch (e) { $('driveInfo').textContent = 'Chưa gửi được lượt đi: ' + e.message; }
+}, 30000);
+$('btnShoot').onclick = () => $('file').click();
+$('file').onchange = () => {
+  const f = $('file').files[0]; if (!f) return;
+  // freeze the sensor reading at the moment the shot comes back
+  S.file = f; S.shot = {lat: S.lat, lon: S.lon, acc: S.acc, heading: S.heading, at: new Date().toISOString(), trail: S.trail.slice(-30)};
+  $('preview').src = URL.createObjectURL(f); $('preview').style.display = 'block';
+  $('btnSend').disabled = S.shot.lat == null;
+  if (S.shot.lat == null) $('warn').textContent = 'Chưa có vị trí GPS. Bấm "Bật GPS và la bàn" rồi chụp lại.';
+};
+let map, layer;
+$('btnSend').onclick = async () => {
+  const fd = new FormData();
+  fd.append('image', S.file); fd.append('lat', S.shot.lat); fd.append('lon', S.shot.lon);
+  if (S.shot.acc != null) fd.append('gps_accuracy_m', S.shot.acc);
+  if (S.shot.heading != null) fd.append('heading_deg', (S.shot.heading % 360).toFixed(1));
+  fd.append('captured_at', S.shot.at); if (S.shot.trail && S.shot.trail.length >= 4) fd.append('trail', JSON.stringify(S.shot.trail)); fd.append('capture_method', $('method').value);
+  fd.append('contributor_group', $('group').value); fd.append('contributor_id', $('cid').value);
+  if ($('cls').value) fd.append('declared_sign_class', $('cls').value);
+  $('btnSend').disabled = true; $('btnSend').textContent = 'Đang gửi';
+  try {
+    const r = await fetch('/v1/contributions', {method: 'POST', body: fd});
+    const j = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(j.detail || j));
+    render(j);
+  } catch (e){ $('result').style.display = 'block'; $('result').textContent = 'Lỗi: ' + e.message; }
+  $('btnSend').textContent = 'Gửi contribution'; $('btnSend').disabled = false;
+};
+function render(j){
+  const e = j.snapped_edge;
+  $('result').style.display = 'block';
+  $('result').innerHTML = `<b class="${j.status}">${j.status}</b>${j.reason ? ' (' + j.reason + ')' : ''}<br>` +
+    `Biển: ${j.detection.sign_class || 'không detect được'}, confidence ${j.detection.confidence}<br>` +
+    (e ? `Edge: ${e.name || 'không tên'}, OSM way ${e.osm_way_id}, node ${e.from_node} tới ${e.to_node}, bearing ${e.bearing_deg} độ<br>Snap confidence ${j.snap_confidence}<br>` : '') +
+    (j.sign_id ? `Sign id: ${j.sign_id}<br>` : '') + `Contribution id: ${j.contribution_id}` +
+    ((j.signs || []).length > 1 ? '<br><b>Tất cả biển trong ảnh:</b><br>' + j.signs.map(s => `${s.qcvn_code || s.detection.sign_class || '?'} ${s.name_vi || ''}: <span class="${s.status}">${s.status}</span>${s.reason ? ' (' + s.reason + ')' : ''}${s.hours ? ', giờ ' + s.hours : ''}${s.snapped_edge ? ', ' + (s.snapped_edge.name || 'way ' + s.snapped_edge.osm_way_id) : ''}`).join('<br>') : '');
+  $('cmap').style.display = 'block';
+  if (!map){ map = L.map('cmap'); L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {maxZoom: 20, subdomains: 'abc', attribution: '&copy; OpenStreetMap contributors, tiles OSM France'}).addTo(map); layer = L.layerGroup().addTo(map); }
+  layer.clearLayers();
+  const cam = [S.shot.lat, S.shot.lon], pts = [cam];
+  L.circleMarker(cam, {radius: 6, color: '#111', fillColor: '#fbbf24', fillOpacity: 1}).bindTooltip('Vị trí chụp').addTo(layer);
+  if (S.shot.heading != null){
+    const k = Math.PI / 180, d = 20;
+    L.polyline([cam, [cam[0] + Math.cos(S.shot.heading * k) * d / 111320, cam[1] + Math.sin(S.shot.heading * k) * d / (111320 * Math.cos(cam[0] * k))]], {color: '#111', weight: 2}).addTo(layer);
   }
+  if (e){ L.polyline(e.geometry, {color: '#2563eb', weight: 6}).addTo(layer); e.geometry.forEach(p => pts.push(p)); }
+  if (j.estimated_sign_position){ const p = [j.estimated_sign_position.lat, j.estimated_sign_position.lon]; L.circleMarker(p, {radius: 7, color: '#fff', weight: 2, fillColor: '#b91c1c', fillOpacity: 1}).bindTooltip('Biển ước lượng').addTo(layer); pts.push(p); }
+  map.invalidateSize(); map.fitBounds(L.latLngBounds(pts).pad(0.3), {maxZoom: 18});
 }
+show();
+
+}
+
+$('btnGallery').onclick = () => $('gallery').click();
+$('gallery').onchange = async e => {
+  const files = [...e.target.files]; if (!files.length) return;
+  const out = $('galleryOut'); out.innerHTML = `<p class="warn">Đang gửi ${files.length} ảnh.</p>`;
+  const rows = [];
+  for (const f of files){
+    const fd = new FormData(); fd.append('image', f); fd.append('capture_method', $('method').value);
+    fd.append('contributor_group', $('group').value); fd.append('contributor_id', $('cid').value || 'gallery');
+    if ($('cls').value) fd.append('declared_sign_class', $('cls').value);
+    try {
+      const r = await fetch('/v1/contributions', {method: 'POST', body: fd}); const j = await r.json();
+      rows.push(r.ok ? `<li>${f.name}: <b>${j.status}</b>${j.reason ? ' (' + j.reason + ')' : ''}${j.detection && j.detection.sign_class ? ', ' + j.detection.sign_class : ''}${j.snapped_edge && j.snapped_edge.name ? ', ' + j.snapped_edge.name : ''}</li>` : `<li>${f.name}: lỗi ${typeof j.detail === 'string' ? j.detail : r.status}</li>`);
+    } catch (err) { rows.push(`<li>${f.name}: lỗi mạng</li>`); }
+    out.innerHTML = `<ul>${rows.join('')}</ul>`;
+  }
+};
+</script>
+<script>
+function initReview(){
+
+const COL = {published: '#1a9850', pending_review: '#d97706', rejected: '#98a2b3'};
+const VI = {published: 'đã publish', pending_review: 'chờ duyệt', rejected: 'bị loại'};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const map = L.map('rmap').setView([10.778, 106.6875], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {maxZoom: 20, subdomains: 'abc', attribution: '&copy; OpenStreetMap contributors, tiles OSM France'}).addTo(map);
+const layers = {cam: L.layerGroup().addTo(map), sign: L.layerGroup().addTo(map), cluster: L.layerGroup().addTo(map), mly: L.layerGroup()};
+const markers = {};
+let data = [], clusters = [], fitted = false;
+
+function ray(lat, lon, h, m){ const r = Math.PI / 180;
+  return [[lat, lon], [lat + Math.cos(h * r) * m / 111320, lon + Math.sin(h * r) * m / (111320 * Math.cos(lat * r))]]; }
+function shown(){ return new Set([...document.querySelectorAll('.fs:checked')].map(x => x.value)); }
+function popup(c){
+  const rows = c.signs.map(s => `<tr><td>${esc(s.qcvn_code || s.detection.sign_class || '?')} ${esc(s.name_vi || '')}${s.hours ? '<br><small>giờ ' + esc(s.hours) + '</small>' : ''}</td>
+    <td><span class="st ${s.status}">${VI[s.status]}</span>${s.reason ? '<br><small>' + esc(s.reason) + '</small>' : ''}${s.snapped_edge ? '<br><small>' + esc(s.snapped_edge.name || 'way ' + s.snapped_edge.osm_way_id) + ', bearing ' + s.snapped_edge.bearing_deg + '°</small>' : ''}</td></tr>`).join('');
+  return `<div class="pop"><img src="${c.image_url}?size=480" alt="Ảnh contribution ${esc(c.id)}" loading="lazy">
+    <small>${esc(c.captured_at.slice(0, 16).replace('T', ' '))} UTC · ${esc(c.group)} · ${esc(c.method)}<br>
+    GPS ±${c.gps_accuracy_m == null ? '?' : Math.round(c.gps_accuracy_m)} m · heading ${c.heading_deg == null ? 'thiếu' : Math.round(c.heading_deg) + '°'}</small>
+    <table>${rows || '<tr><td>Không thấy biển nào</td></tr>'}</table>
+    <div class="fb"><button onclick="openLabel('${esc(c.id)}')">Gắn nhãn đáp án cho ảnh này</button></div></div>`;
+}
+function draw(){
+  [layers.cam, layers.sign, layers.cluster].forEach(l => l.clearLayers());
+  const ok = shown(), pts = [];
+  data.filter(c => ok.has(c.status)).forEach(c => {
+    const col = COL[c.status];
+    const m = L.circleMarker([c.lat, c.lon], {radius: 7, color: '#111827', weight: 1.5, fillColor: col, fillOpacity: 1}).bindPopup(popup(c), {maxWidth: 280});
+    m.addTo(layers.cam); markers[c.id] = m; pts.push([c.lat, c.lon]);
+    if (c.heading_deg != null) L.polyline(ray(c.lat, c.lon, c.heading_deg, 25), {color: '#111827', weight: 2}).addTo(layers.cam);
+    if (c.gps_accuracy_m) L.circle([c.lat, c.lon], {radius: c.gps_accuracy_m, color: col, weight: 1, fillOpacity: .06, interactive: false}).addTo(layers.cam);
+    c.signs.forEach(s => {
+      if (!s.estimated_sign_position) return;
+      const p = [s.estimated_sign_position.lat, s.estimated_sign_position.lon], sc = COL[s.status];
+      L.polyline([[c.lat, c.lon], p], {color: sc, weight: 1, dashArray: '3 4'}).addTo(layers.sign);
+      L.circleMarker(p, {radius: 5, color: '#fff', weight: 2, fillColor: sc, fillOpacity: 1})
+        .bindTooltip(`${s.qcvn_code || s.detection.sign_class}: ${VI[s.status]}`).addTo(layers.sign);
+      if (s.snapped_edge) L.polyline(s.snapped_edge.geometry, {color: sc, weight: 6, opacity: .7}).addTo(layers.sign);
+    });
+  });
+  clusters.filter(f => ok.has(f.properties.status === 'published' ? 'published' : f.properties.status === 'stale' ? 'rejected' : 'pending_review')).forEach(f => {
+    const [lon, lat] = f.geometry.coordinates, p = f.properties, col = p.status === 'published' ? COL.published : p.status === 'stale' ? COL.rejected : COL.pending_review;
+    L.circleMarker([lat, lon], {radius: 12, color: col, weight: 3, fillOpacity: 0})
+      .bindPopup(() => clusterPopup(p)).addTo(layers.cluster);
+  });
+  if (!fitted && pts.length){ map.fitBounds(L.latLngBounds(pts).pad(0.4), {maxZoom: 17}); fitted = true; }
+  const n = s => data.filter(c => c.status === s).length;
+  $('stats').innerHTML = `<span><b>${data.length}</b> ảnh</span><span><b>${n('published')}</b> publish</span><span><b>${n('pending_review')}</b> chờ duyệt</span><span><b>${n('rejected')}</b> loại</span><span><b>${clusters.length}</b> biển sau gộp</span>`;
+  $('list').innerHTML = data.length ? '' : '<p class="empty">Chưa có contribution nào. Mở trang chụp để gửi ảnh đầu tiên.</p>';
+  data.slice(0, 50).forEach(c => {
+    const d = document.createElement('div'); d.className = 'item';
+    const s = c.signs.find(x => x.status !== 'rejected') || c.signs[0];
+    d.innerHTML = `<img src="${c.image_url}?size=160" alt="" loading="lazy"><div><span class="st ${c.status}">${VI[c.status]}</span><br>
+      ${esc(s ? (s.qcvn_code || s.detection.sign_class || 'không thấy biển') + ' ' + (s.name_vi || '') : 'không thấy biển')}<br>
+      <small>${esc(c.captured_at.slice(0, 16).replace('T', ' '))} · ${c.signs.length} biển trong ảnh</small></div>`;
+    d.onclick = () => { map.setView([c.lat, c.lon], 18); markers[c.id] && markers[c.id].openPopup(); };
+    $('list').appendChild(d);
+  });
+}
+const STV = {published: 'đã publish', review: 'chờ duyệt', stale: 'đã gỡ khỏi routing'};
+function clusterPopup(p){
+  const fb = Object.entries(p.feedback || {}).map(([k, v]) => `${k}: ${v}`).join(', ') || 'chưa có';
+  const d = document.createElement('div');
+  d.innerHTML = `<b>${esc(p.sign_class)}</b>: ${STV[p.status] || p.status}${p.reason ? ' (' + esc(p.reason) + ')' : ''}<br>
+    ${p.reports} report, ${p.independent_contributors} contributor độc lập, score ${p.score}<br>
+    Phản hồi tài xế (${p.feedback_votes || 0} phiếu, có trọng số): ${esc(fb)}<br><small>${esc(p.sign_id)}</small>
+    <div class="fb"><button data-v="confirm">Đúng, biển còn</button><button data-v="not_there">Không còn biển</button>
+    <button data-v="wrong_type">Sai loại biển</button><button data-v="wrong_direction">Sai chiều</button></div><div class="fbmsg empty"></div>`;
+  d.querySelectorAll('button').forEach(b => b.onclick = () => vote(p.sign_id, b.dataset.v, d.querySelector('.fbmsg')));
+  return d;
+}
+async function vote(id, v, msg){
+  const body = {vote: v, contributor_group: $('fbGroup').value, contributor_id: $('fbId').value || 'anon'};
+  const pos = await new Promise(res => { if (!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(p => res(p.coords), () => res(null), {timeout: 4000, maximumAge: 60000}); });
+  if (pos){ body.lat = pos.latitude; body.lon = pos.longitude; }
+  const r = await fetch(`/v1/signs/${encodeURIComponent(id)}/feedback`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const j = await r.json();
+  msg.textContent = r.ok ? `Đã ghi. Trạng thái: ${STV[j.status_before] || j.status_before} → ${STV[j.status_after] || j.status_after}${pos ? '' : ' (không có vị trí, phiếu tính nửa trọng số)'}` : 'Không ghi được: ' + (j.detail || r.status);
+  load();
+}
+const routeLayer = L.layerGroup().addTo(map);
+let pick = null, pts2 = [];
+$('rPick').onclick = () => { pick = 'from'; pts2 = []; routeLayer.clearLayers(); $('rOut').textContent = 'Bấm điểm đi trên bản đồ.'; };
+map.on('click', async e => {
+  if (!pick) return;
+  pts2.push(e.latlng); L.circleMarker(e.latlng, {radius: 7, color: '#111827', fillColor: pick === 'from' ? '#2563eb' : '#1a9850', fillOpacity: 1}).addTo(routeLayer);
+  if (pick === 'from'){ pick = 'to'; $('rOut').textContent = 'Bấm điểm đến.'; return; }
+  pick = null; $('rOut').textContent = 'Đang tính route.';
+  const [a, b] = pts2, q = new URLSearchParams({from_lat: a.lat, from_lon: a.lng, to_lat: b.lat, to_lon: b.lng, weight_kg: $('rW').value, height_m: $('rH').value, depart: $('rT').value});
+  const r = await fetch('/v1/route?' + q); const j = await r.json();
+  if (!r.ok){ $('rOut').textContent = 'Không tính được: ' + JSON.stringify(j.detail); return; }
+  L.polyline(j.without_signs.geometry, {color: '#d73027', weight: 5, opacity: .7, dashArray: '8 6'}).addTo(routeLayer);
+  L.polyline(j.with_signs.geometry, {color: '#1a9850', weight: 5, opacity: .85}).addTo(routeLayer);
+  $('rOut').innerHTML = `Không dùng biển: ${j.without_signs.km} km (đỏ đứt). Có biển: ${j.with_signs.km} km (xanh).<br>
+    ${j.avoided_signs.length ? 'Tránh ' + j.avoided_signs.length + ' biển, thêm ' + j.added_km + ' km.' : 'Route không đi qua biển nào đang có hiệu lực với xe này.'}
+    <br><small>${j.signs_live} biển đã publish, ${j.signs_binding} áp cho xe ${j.truck.weight_kg} kg lúc ${esc(j.truck.depart)}.</small>`;
+});
+/* ---------- signs on the real road (OSRM) ---------- */
+const roadLayer = L.layerGroup().addTo(map);
+const GLYPH = {
+  truck_ban: '<rect x="9" y="15" width="10" height="7" fill="#111"/><path d="M19 17h4l3 3v2h-7z" fill="#111"/><circle cx="12" cy="23" r="1.8" fill="#111"/><circle cx="23" cy="23" r="1.8" fill="#111"/>',
+  max_height: '<path d="M18 9l-3 4h6zM18 27l-3-4h6z" fill="#111"/><text x="18" y="21.5" font-size="7" text-anchor="middle" font-family="Arial" font-weight="700" fill="#111">H</text>',
+  max_weight: '<text x="18" y="21.5" font-size="8" text-anchor="middle" font-family="Arial" font-weight="700" fill="#111">t</text>',
+  car_ban: '<rect x="10" y="16" width="16" height="6" rx="2" fill="#111"/><circle cx="13" cy="23" r="1.8" fill="#111"/><circle cx="23" cy="23" r="1.8" fill="#111"/>'};
+function signIcon(cls, faded){
+  const g = GLYPH[cls] || '<text x="18" y="21.5" font-size="7" text-anchor="middle" font-family="Arial" fill="#111">?</text>';
+  const slash = cls === 'max_height' || cls === 'max_weight' ? '' : '<line x1="8" y1="8" x2="28" y2="28" stroke="#d00" stroke-width="3"/>';
+  return L.divIcon({className: '', iconSize: [36, 36], iconAnchor: [18, 18],
+    html: `<svg width="36" height="36" viewBox="0 0 36 36" style="opacity:${faded ? .55 : 1};filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))"><circle cx="18" cy="18" r="16" fill="#fff" stroke="#d00" stroke-width="4"/>${g}${slash}</svg>`});
+}
+const CLS_VI = {truck_ban: 'Cấm xe tải', max_height: 'Hạn chế chiều cao', max_weight: 'Hạn chế tải trọng', car_ban: 'Cấm ô tô'};
+async function loadRoad(){
+  roadLayer.clearLayers();
+  const list = await fetch('/v1/map/road-signs').then(r => r.json()).catch(() => []);
+  list.forEach(s => {
+    const mine = s.source === 'contributors', on = s.osrm ? [s.osrm.lat, s.osrm.lon] : [s.lat, s.lon];
+    if (s.edge){
+      const col = mine ? (s.status === 'published' ? '#d00' : '#d97706') : '#b91c1c';
+      L.polyline(s.edge.geometry, {color: col, weight: 6, opacity: mine ? .85 : .5}).addTo(roadLayer);
+      const n = s.edge.geometry.length, a = s.edge.geometry[Math.max(0, n - 2)], b = s.edge.geometry[n - 1];
+      L.marker(b, {interactive: false, icon: L.divIcon({className: '', iconSize: [14, 14], iconAnchor: [7, 7],
+        html: `<div style="transform:rotate(${Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI}deg);color:${col};font-size:14px;line-height:14px">&#9650;</div>`})}).addTo(roadLayer);
+    }
+    if (s.osrm) L.polyline([[s.lat, s.lon], on], {color: '#475569', weight: 1, dashArray: '2 3'}).addTo(roadLayer);
+    L.marker(on, {icon: signIcon(s.cls, !mine && false)}).bindPopup(`<b>${CLS_VI[s.cls] || s.cls}</b> · ${mine ? 'từ contributor, ' + (s.status === 'published' ? 'đã publish' : 'chờ duyệt') + ', ' + s.reports + ' report' : 'nguồn Mapillary, nhìn thấy lần cuối ' + esc((s.last_seen || '').slice(0, 10))}<br>
+      ${s.osrm ? 'OSRM khớp vào đường <b>' + esc(s.osrm.road || 'không tên') + '</b>, dời ' + s.osrm.moved_m + ' m' : 'OSRM chưa khớp'}<br>
+      ${s.edge ? 'Đoạn bị cấm: ' + esc(s.edge.name || 'không tên') + ', chiều ' + s.edge.bearing + '°' + (s.edge.confidence != null ? ', confidence ' + s.edge.confidence : '') : ''}`).addTo(roadLayer);
+  });
+}
+$('tRoad').onchange = e => e.target.checked ? roadLayer.addTo(map) : map.removeLayer(roadLayer);
+loadRoad();
+
+/* ---------- a real driver trip ---------- */
+const tripLayer = L.layerGroup().addTo(map);
+let TRIPS = [];
+fetch('/v1/trips/samples').then(r => r.json()).then(t => {
+  TRIPS = t;
+  $('tripSel').innerHTML = '<option value="">Chọn một chuyến</option>' + t.map((x, i) =>
+    `<option value="${i}">Chuyến ${i + 1}: xe ${x.payload_kg} kg, đặt lúc ${String(x.hour_vn).padStart(2, '0')}h, ${x.orders} đơn</option>`).join('');
+});
+$('tripT').onchange = () => $('tripSel').onchange({target: $('tripSel')});
+$('tripSel').onchange = e => { if (e.target.value !== '') runTrip(TRIPS[+e.target.value]); else tripLayer.clearLayers(); };
+async function runTrip(t){
+  tripLayer.clearLayers();
+  $('tripOut').textContent = 'Đang lấy route từ OSRM.';
+  const q = new URLSearchParams({from_lat: t.from_lat, from_lon: t.from_lon, to_lat: t.to_lat, to_lon: t.to_lon,
+    weight_kg: t.payload_kg, height_m: 2.8, depart: $('tripT').value.trim() || String(t.hour_vn).padStart(2, '0') + ':30'});
+  const r = await fetch('/v1/trip?' + q); const j = await r.json();
+  if (!r.ok){ $('tripOut').textContent = 'Không lấy được route: ' + JSON.stringify(j.detail); return; }
+  const route = L.polyline(j.osrm_geometry, {color: '#2563eb', weight: 6, opacity: .8}).addTo(tripLayer);
+  if (j.detour) L.polyline(j.detour.geometry, {color: '#1a9850', weight: 5, opacity: .9, dashArray: '10 6'}).addTo(tripLayer);
+  L.circleMarker([t.from_lat, t.from_lon], {radius: 8, color: '#111827', weight: 2, fillColor: '#2563eb', fillOpacity: 1}).bindTooltip('Điểm lấy hàng', {permanent: true, direction: 'top'}).addTo(tripLayer);
+  L.circleMarker([t.to_lat, t.to_lon], {radius: 8, color: '#111827', weight: 2, fillColor: '#1a9850', fillOpacity: 1}).bindTooltip('Điểm giao hàng', {permanent: true, direction: 'top'}).addTo(tripLayer);
+  j.alerts.forEach((a, i) => L.marker([a.lat, a.lon], {icon: signIcon(a.cls), zIndexOffset: 1000})
+    .bindTooltip(`${i + 1}. ${CLS_VI[a.cls] || a.cls}, km ${a.at_km}`, {permanent: true, direction: 'right', offset: [14, 0]}).addTo(tripLayer));
+  map.fitBounds(route.getBounds().pad(0.15));
+  const v = x => x.binds_this_truck === true ? '<span class="no">cấm xe này giờ này</span>' : x.binds_this_truck === false ? '<span class="ok">không áp giờ này</span>' : 'cần kiểm biển phụ';
+  $('tripOut').innerHTML = `Route OSRM ${j.osrm_km} km (xanh dương), xe ${j.truck.weight_kg} kg khởi hành ${esc(j.truck.depart)}.<br>
+    ${j.alerts.length ? '<b>Biển gặp trên đường:</b><br>' + j.alerts.map((a, i) => `${i + 1}. km ${a.at_km}: ${CLS_VI[a.cls] || a.cls}, ${esc(a.road || 'không tên')} (${a.source === 'mapillary' ? 'Mapillary' : 'contributor'}), ${v(a)}`).join('<br>') : 'Không gặp biển nào đã biết trên route này.'}
+    ${j.detour ? `<br><b>Đường né biển:</b> ${j.detour.km} km (xanh lá đứt), thêm ${j.detour.added_km} km so với đường ngắn nhất ${j.detour.shortest_without_signs_km} km khi không có biển. OSRM tối ưu theo thời gian nên dài khác.` : ''}`;
+}
+(() => {  // ?from=lat,lon&to=lat,lon&kg=1000&t=07:30 runs a trip between any two points
+  const u = new URLSearchParams(location.search), f = u.get('from'), d = u.get('to');
+  if (!f || !d) return;
+  const [a1, b1] = f.split(',').map(Number), [a2, b2] = d.split(',').map(Number);
+  if (u.get('t')) $('tripT').value = u.get('t');
+  runTrip({from_lat: a1, from_lon: b1, to_lat: a2, to_lon: b2, payload_kg: +(u.get('kg') || 1000), hour_vn: 7});
+})();
+
+/* ---------- gold-set labelling ---------- */
+const LIB = {};
+fetch('/v1/library').then(r => r.json()).then(x => x.forEach(s => LIB[s.code] = s)).catch(() => {});
+const pickLayer = L.layerGroup().addTo(map);
+let lbState = null;  // {cid, rows: [{sign_index, true_code, true_edge, sign_lat, sign_lon}]}, picking: {k, what}
+function codeOptions(sel){
+  const codes = Object.keys(LIB).filter(c => LIB[c].routing_effect).sort();
+  return `<option value="none"${sel === 'none' ? ' selected' : ''}>Không phải biển giao thông</option>` +
+    codes.map(c => `<option value="${c}"${c === sel ? ' selected' : ''}>${c} ${esc(LIB[c].name_vi)}</option>`).join('') +
+    (sel && !LIB[sel] && sel !== 'none' ? `<option value="${esc(sel)}" selected>${esc(sel)}</option>` : '') +
+    `<option value="other_no_routing">Biển khác, không ảnh hưởng routing</option>`;
+}
+function openLabel(cid){
+  const c = data.find(x => x.id === cid); if (!c) return;
+  map.closePopup();
+  lbState = {cid, c, rows: c.signs.map((s, i) => ({sign_index: i, true_code: s.qcvn_code && LIB[s.qcvn_code] ? s.qcvn_code : 'none', true_edge: s.snapped_edge ? s.snapped_edge.edge_id : null, sign_lat: null, sign_lon: null}))};
+  $('labelBox').hidden = false; $('lbId').textContent = cid; $('lbImg').src = c.image_url + '?size=640';
+  renderLabel(); $('labelBox').scrollIntoView({behavior: 'smooth'});
+}
+function renderLabel(){
+  const c = lbState.c;
+  $('lbSigns').innerHTML = '';
+  lbState.rows.forEach((r, k) => {
+    const s = r.sign_index == null ? null : c.signs[r.sign_index];
+    const d = document.createElement('div'); d.className = 'lb';
+    d.innerHTML = `<b>${s ? 'Biển ' + (r.sign_index + 1) + ', pipeline đọc: ' + esc(s.qcvn_code || s.detection.sign_class || '?') + ' (' + s.detection.confidence + ')' : 'Biển bị bỏ sót'}</b>
+      <label>Mã đúng <select>${codeOptions(r.true_code)}</select></label>
+      <span>Edge đúng: ${r.true_edge == null ? '<i>chưa chọn</i>' : r.true_edge}${s && s.snapped_edge ? (s.snapped_edge.edge_id === r.true_edge ? ' <span class="ok">(trùng pipeline)</span>' : ' <span class="no">(khác pipeline ' + s.snapped_edge.edge_id + ')</span>') : ''}</span>
+      <span>Vị trí biển: ${r.sign_lat == null ? '<i>chưa chọn</i>' : r.sign_lat.toFixed(6) + ', ' + r.sign_lon.toFixed(6)}</span>
+      <div class="fb"><button data-a="edge">Chọn edge đúng trên bản đồ</button><button data-a="pos">Chọn vị trí biển</button><button data-a="save">Lưu nhãn</button></div><span class="msg empty"></span>`;
+    d.querySelector('select').onchange = e => { r.true_code = e.target.value; };
+    d.querySelectorAll('button').forEach(b => b.onclick = () => {
+      if (b.dataset.a === 'save') return saveLabel(r, d.querySelector('.msg'));
+      lbState.picking = {k, what: b.dataset.a};
+      $('lbHint').textContent = b.dataset.a === 'edge' ? 'Bấm gần đoạn đường biển áp dụng, rồi bấm vào mũi tên đúng chiều.' : 'Bấm vào chỗ cột biển trên bản đồ.';
+    });
+    $('lbSigns').appendChild(d);
+  });
+  map.setView([c.lat, c.lon], 18);
+}
+async function saveLabel(r, msg){
+  const body = {sign_index: r.sign_index, true_code: r.true_code === 'other_no_routing' ? 'none' : r.true_code, true_edge: r.true_edge,
+                sign_lat: r.sign_lat, sign_lon: r.sign_lon, labeler: $('fbId').value || 'owner'};
+  if (body.true_code !== 'none' && body.true_edge == null){ msg.textContent = 'Chọn edge đúng trước khi lưu.'; return; }
+  const res = await fetch(`/v1/contributions/${encodeURIComponent(lbState.cid)}/labels`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  msg.textContent = res.ok ? 'Đã lưu.' : 'Không lưu được: ' + JSON.stringify((await res.json()).detail);
+  loadEval();
+}
+$('lbMissed').onclick = () => { lbState.rows.push({sign_index: null, true_code: 'P.106a', true_edge: null, sign_lat: null, sign_lon: null}); renderLabel(); };
+$('lbClose').onclick = () => { $('labelBox').hidden = true; lbState = null; pickLayer.clearLayers(); };
+map.on('click', async e => {
+  if (!lbState || !lbState.picking) return;
+  const {k, what} = lbState.picking, r = lbState.rows[k];
+  if (what === 'pos'){ r.sign_lat = e.latlng.lat; r.sign_lon = e.latlng.lng; lbState.picking = null; $('lbHint').textContent = ''; renderLabel(); return; }
+  const cands = await fetch(`/v1/edges/near?lat=${e.latlng.lat}&lon=${e.latlng.lng}&radius_m=40`).then(x => x.json());
+  pickLayer.clearLayers();
+  cands.forEach(cd => {
+    const line = L.polyline(cd.geometry, {color: '#2563eb', weight: 8, opacity: .55}).addTo(pickLayer);
+    const end = cd.geometry[cd.geometry.length - 1];
+    L.circleMarker(end, {radius: 5, color: '#2563eb', fillOpacity: 1}).addTo(pickLayer);
+    line.bindTooltip(`${esc(cd.name || 'không tên')}, hướng ${Math.round(cd.bearing_deg)}°, cách ${cd.distance_m} m (chấm tròn là điểm cuối)`, {sticky: true});
+    line.on('click', ev => { L.DomEvent.stopPropagation(ev); r.true_edge = cd.edge_id; lbState.picking = null; pickLayer.clearLayers(); $('lbHint').textContent = ''; renderLabel(); });
+  });
+  $('lbHint').textContent = cands.length ? `${cands.length} edge gần đó. Rê chuột xem hướng, bấm edge đúng chiều.` : 'Không có đường trong 40 m.';
+});
+async function loadEval(){
+  try {
+    const v = await fetch('/v1/eval').then(r => r.json());
+    const f = m => m.n ? `${m.k}/${m.n} = ${(100 * m.rate).toFixed(0)}% <small>(${(100 * m.lo).toFixed(0)}-${(100 * m.hi).toFixed(0)}%)</small>` : 'chưa có nhãn';
+    $('evalBox').innerHTML = `<table class="ev">
+      <tr><td>Ảnh đã gắn nhãn</td><td>${v.photos_labelled}</td></tr>
+      <tr><td>Biển thật tìm ra đúng mã</td><td>${f(v.detection_recall_right_code)}</td></tr>
+      <tr><td>Riêng 11 mã cho xe tải</td><td>${f(v.detection_recall_truck_codes)}</td></tr>
+      <tr><td>Precision biển qua ngưỡng 0,5</td><td>${f(v.detection_precision_at_gate)}</td></tr>
+      <tr><td>Snap đúng edge, trong số tự gán</td><td>${f(v.snap_correct_of_auto_assigned)}</td></tr>
+      <tr><td>Snap sai, trên biển có nhãn edge</td><td>${f(v.snap_wrong_of_labelled)}</td></tr>
+      <tr><td>Vào hàng chờ duyệt</td><td>${f(v.snap_review_of_labelled)}</td></tr>
+      <tr><td>Sai số vị trí biển p50 / p90</td><td>${v.position_error_m.n ? v.position_error_m.p50 + ' / ' + v.position_error_m.p90 + ' m, n=' + v.position_error_m.n : 'chưa có'}</td></tr></table>
+      <small>Khoảng trong ngoặc là khoảng tin cậy 95% (Wilson).</small>`;
+  } catch (e) { $('evalBox').textContent = 'Không tải được: ' + e.message; }
+}
+loadEval();
+async function load(){
+  try {
+    const [a, b] = await Promise.all([fetch('/v1/contributions').then(r => r.json()), fetch('/v1/signs?include_pending=true').then(r => r.json())]);
+    data = a; clusters = b.features || []; draw();
+  } catch (e) { $('list').innerHTML = '<p class="empty">Không tải được dữ liệu từ server: ' + esc(e.message) + '</p>'; }
+}
+const AUTO_COL = {vehicle_ban: '#d00', road_closed: '#7f1d1d', turn_ban: '#ff7f32', no_stop_park: '#1f5fd6', speed_sign: '#111827'};
+const autoLayers = {published: L.layerGroup(), held: L.layerGroup()}, autoLoaded = {};
+async function toggleAuto(st, on){
+  if (!on){ map.removeLayer(autoLayers[st]); return; }
+  if (!autoLoaded[st]){
+    const list = await fetch('/v1/auto-signs?status=' + st).then(r => r.json());
+    const rend = L.canvas({padding: .3});
+    list.forEach(a => { const col = st === 'held' ? '#94a3b8' : (AUTO_COL[a.kind] || '#111');
+      L.circleMarker([a.lat, a.lon], {renderer: rend, radius: st === 'held' ? 3 : 4.5, color: '#fff', weight: 1, fillColor: col, fillOpacity: .9})
+        .bindTooltip(`<b>${esc(a.label)}</b> ${esc(a.qcvn || '')}<br>${esc(KIND_VI[a.kind] || a.kind)} · hướng ${a.travel_heading}°<br>thấy ${a.n_features} lượt, ${a.capture_days} ngày · lần cuối ${esc(a.last_seen || '')}<br>${a.edge ? 'đường ' + esc(a.edge.name || 'không tên') + ', confidence ' + a.edge.confidence : 'chưa gắn cạnh'}${a.reasons.length ? '<br>giữ vì: ' + a.reasons.map(r => esc(REASON_VI[r] || r)).join(', ') : ''}`)
+        .addTo(autoLayers[st]); });
+    autoLoaded[st] = true;
+  }
+  autoLayers[st].addTo(map);
+}
+$('tAuto').onchange = e => toggleAuto('published', e.target.checked);
+$('tAutoHeld').onchange = e => toggleAuto('held', e.target.checked);
+let mlyLoaded = false;
+$('tMly').onchange = async e => {
+  if (!e.target.checked){ map.removeLayer(layers.mly); return; }
+  if (!mlyLoaded){
+    const fc = await fetch('/v1/reference/mapillary').then(r => r.json());
+    fc.features.forEach(f => { const [lon, lat] = f.geometry.coordinates, p = f.properties;
+      L.circleMarker([lat, lon], {radius: 4, color: '#7c3aed', weight: 1, fillColor: '#7c3aed', fillOpacity: .6})
+        .bindTooltip(`${esc(p.value)}<br>nhìn thấy lần cuối ${esc((p.last_seen || '').slice(0, 10))}`).addTo(layers.mly); });
+    mlyLoaded = true;
+  }
+  layers.mly.addTo(map);
+};
+[['tCam', 'cam'], ['tSign', 'sign'], ['tCluster', 'cluster']].forEach(([id, k]) => $(id).onchange = e => e.target.checked ? layers[k].addTo(map) : map.removeLayer(layers[k]));
+document.querySelectorAll('.fs').forEach(x => x.onchange = draw);
+load(); setInterval(load, 20000);
+
+const covLayer = L.layerGroup();
+$('tCov').onchange = async e => {
+  if (!e.target.checked){ map.removeLayer(covLayer); return; }
+  covLayer.clearLayers();
+  const v = await fetch('/v1/coverage').then(r => r.json());
+  v.cells.forEach(c => L.polygon(c.boundary, {color: '#334155', weight: 1, fillOpacity: .35,
+    fillColor: c.share >= .8 ? '#1a9850' : c.share >= .4 ? '#f59e0b' : '#dc2626'})
+    .bindTooltip(`Ô ${c.cell}: ${c.observed_km}/${c.truck_km} km đường xe tải đã đi qua (${Math.round(100 * c.share)}%)`).addTo(covLayer));
+  covLayer.addTo(map);
+};
+window.openLabel = openLabel;
+window.reviewMap = map;
+}
+</script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const fmt = n => n == null ? '–' : Number(n).toLocaleString('vi-VN');
+const CLS_VI = {truck_ban: 'Cấm xe tải', max_height: 'Hạn chế chiều cao', max_weight: 'Hạn chế tải trọng', car_ban: 'Cấm ô tô',
+  no_entry: 'Cấm đi ngược chiều', no_left_turn: 'Cấm rẽ trái', no_right_turn: 'Cấm rẽ phải', no_u_turn: 'Cấm quay đầu', motorbike_ban: 'Cấm xe máy'};
+const GLYPH = {
+  truck_ban: '<rect x="9" y="15" width="10" height="7" fill="#111"/><path d="M19 17h4l3 3v2h-7z" fill="#111"/><circle cx="12" cy="23" r="1.8" fill="#111"/><circle cx="23" cy="23" r="1.8" fill="#111"/>',
+  max_height: '<path d="M18 9l-3 4h6zM18 27l-3-4h6z" fill="#111"/><text x="18" y="21.5" font-size="7" text-anchor="middle" font-family="Arial" font-weight="700" fill="#111">H</text>',
+  max_weight: '<text x="18" y="21.5" font-size="8" text-anchor="middle" font-family="Arial" font-weight="700" fill="#111">t</text>',
+  car_ban: '<rect x="10" y="16" width="16" height="6" rx="2" fill="#111"/><circle cx="13" cy="23" r="1.8" fill="#111"/><circle cx="23" cy="23" r="1.8" fill="#111"/>'};
+function svg(cls, size = 30){
+  const g = GLYPH[cls] || '<text x="18" y="21.5" font-size="7" text-anchor="middle" font-family="Arial" fill="#111">?</text>';
+  const slash = cls === 'max_height' || cls === 'max_weight' ? '' : '<line x1="8" y1="8" x2="28" y2="28" stroke="#d00" stroke-width="3"/>';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#fff" stroke="#d00" stroke-width="4"/>${g}${slash}</svg>`;
+}
+
+/* ---------- tabs ---------- */
+let reviewReady = false, captureReady = false;
+function tab(t){
+  ['overview', 'directions', 'review', 'capture'].forEach(v => $(v).classList.toggle('on', v === t));
+  $('tOverview').classList.toggle('on', t === 'overview'); $('tDirections').classList.toggle('on', t === 'directions'); $('tReview').classList.toggle('on', t === 'review'); $('tCapture').classList.toggle('on', t === 'capture');
+  if (t === 'capture' && !captureReady){ captureReady = true; initCapture(); }
+  if (t === 'review'){ if (!reviewReady){ reviewReady = true; initReview(); } setTimeout(() => window.reviewMap && window.reviewMap.invalidateSize(), 50); }
+  if (t === 'directions'){ initMap(); setTimeout(() => { map.invalidateSize(); drawLayers(); }, 50); }
+  history.replaceState(null, '', '#' + t);
+}
+$('tOverview').onclick = () => tab('overview'); $('tDirections').onclick = () => tab('directions'); $('tReview').onclick = () => tab('review'); $('tCapture').onclick = () => tab('capture');
+
+/* ---------- overview ---------- */
+function funnel(el, stages){
+  const top = Math.max(1, ...stages.map(s => s[1] || 0));
+  $(el).innerHTML = stages.map(([name, v, col, note]) => `<div class="stage"><span>${name}${note ? '<br><small class="note">' + note + '</small>' : ''}</span>
+    <div class="bar"><i style="width:${100 * (v || 0) / top}%;background:${col}"></i></div><b>${fmt(v)}</b></div>`).join('');
+}
+const KIND_VI = {vehicle_ban: 'Cấm phương tiện', road_closed: 'Đường cấm', turn_ban: 'Cấm rẽ, quay đầu', no_stop_park: 'Cấm dừng, đỗ', speed_sign: 'Tốc độ tối đa'};
+const REASON_VI = {single_capture: 'mới thấy 1 lần', low_snap_confidence: 'gắn cạnh chưa chắc', stale: 'ảnh cũ trước 2022', no_edge: 'không có cạnh đường gần'};
+async function loadAuto(){
+  const a = await fetch('/v1/auto-signs/summary').then(r => r.json()).catch(() => null);
+  if (!a || !a.total){ $('autoBox').textContent = 'Chưa có lớp biển tự động.'; return; }
+  $('autoBox').innerHTML = `<div class="sum"><div>Lượt phát hiện<b>${fmt(a.detections)}</b>ảnh Mapillary, vùng trung tâm</div><div>Biển sau khi gộp<b>${fmt(a.total)}</b>cùng mã, cùng hướng, gần nhau</div><div>Đã publish<b>${fmt(a.published)}</b>${Math.round(a.published / a.total * 100)}% qua cổng tự động</div></div>
+    <p class="hint" style="margin-top:8px">Cổng publish: thấy độc lập từ 2 lần, ảnh từ 2022, gắn cạnh đường confidence ≥ 0,6. Biển bị giữ: ${Object.entries(a.reasons).map(([k, v]) => esc(REASON_VI[k] || k) + ' ' + fmt(v)).join(' · ')}.</p>`;
+  $('autoKinds').innerHTML = `<table><tr><th>Loại</th><th>Đã publish</th><th>Đang giữ</th></tr>${Object.entries(a.by_kind).map(([k, v]) => `<tr><td>${esc(KIND_VI[k] || k)}</td><td><b>${fmt(v.published)}</b></td><td>${fmt(v.held)}</td></tr>`).join('')}</table>
+    <table style="margin-top:10px"><tr><th>Mã QCVN</th><th>Biển</th><th>Đã publish</th></tr>${a.top_codes.map(x => `<tr><td>${esc(x.qcvn || '')}</td><td>${esc(x.label)}</td><td>${fmt(x.n)}</td></tr>`).join('')}</table>`;
+}
+async function loadOverview(){
+  loadAuto();
+  const d = await fetch('/v1/dashboard').then(r => r.json());
+  const c = d.contributors, m = d.mapillary;
+  funnel('fContrib', [['Ảnh đã gửi', c.submitted_photos, 'var(--sub)'], ['Biển đọc được', c.detected_signs, 'var(--sub)'],
+    ['Đã xác minh', c.verified, 'var(--ver)', '≥ 2 người báo, đủ điểm đồng thuận'], ['Đang áp dụng', c.live, 'var(--live)', 'routing đang tránh'],
+    ['Chờ duyệt', c.in_review, 'var(--warn)']]);
+  funnel('fMly', [['Biển hiệu lệnh', m.detected_regulatory, 'var(--sub)'], ['Liên quan xe tải', m.truck_relevant, 'var(--sub)', 'cấm tải, chiều cao, tải trọng, cấm ô tô'],
+    ['Đã xác minh', m.verified, 'var(--ver)', 'snap edge confidence ≥ 0,6'], ['Đang áp dụng', m.live, 'var(--live)', 'routing đang tránh']]);
+  const cls = Object.entries(d.by_class).sort((a, b) => ((b[1].mapillary_total || 0) + (b[1].contrib_total || 0)) - ((a[1].mapillary_total || 0) + (a[1].contrib_total || 0)));
+  $('byClass').innerHTML = `<table><tr><th>Loại biển</th><th>Mapillary</th><th>Đã xác minh</th><th>Đang áp dụng</th><th>Contributor</th><th>Contributor đang áp dụng</th></tr>${
+    cls.map(([k, v]) => `<tr><td><span class="ico">${svg(k, 24)}${esc(CLS_VI[k] || k)}</span></td><td>${fmt(v.mapillary_total || 0)}</td><td>${fmt(v.mapillary_verified || 0)}</td><td>${fmt(v.mapillary_live || 0)}</td><td>${fmt(v.contrib_total || 0)}</td><td>${fmt(v.contrib_live || 0)}</td></tr>`).join('')}</table>`;
+  const keys = ['truck_ban', 'max_height', 'max_weight', 'car_ban'];
+  $('roads').innerHTML = `<table><tr><th>Đường</th><th>Tổng biển</th>${keys.map(k => `<th>${CLS_VI[k]}</th>`).join('')}</tr>${
+    d.roads.map(r => `<tr><td>${esc(r.road)}</td><td><b>${r.total}</b></td>${keys.map(k => `<td>${r[k] || ''}</td>`).join('')}</tr>`).join('')}</table>
+    <p class="note">${d.roads.length} con đường, ${d.roads.reduce((a, r) => a + r.total, 0)} biển đã xác minh.</p>`;
+}
+loadOverview();
+async function loadCoverage(){
+  const v = await fetch('/v1/coverage').then(r => r.json()).catch(() => null);
+  if (!v){ $('covBox').textContent = 'Không tải được độ phủ.'; return; }
+  const st = v.stopping, pct = x => x == null ? '–' : (100 * x).toFixed(0) + '%';
+  $('covBox').innerHTML = `<div class="sum" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+    <div class="card" style="padding:10px">Km đường xe tải đã đi qua<br><b style="font-size:18px">${v.observed_km} / ${v.truck_km_in_touched_cells} km</b><br>${pct(v.observed_share)}</div>
+    <div class="card" style="padding:10px">Ô H3 đạt ≥ 80%<br><b style="font-size:18px">${v.cells_over_80} / ${v.cells.length}</b></div>
+    <div class="card" style="padding:10px">Chỉ số dừng<br><b style="font-size:18px">${pct(st.index)}</b><br>${st.observed} biển thấy, Chao1 ${st.chao1}, hai nguồn ${st.chapman ?? '–'}</div>
+    <div class="card" style="padding:10px">Lượt đi đã ghi<br><b style="font-size:18px">${v.passes}</b><br>${v.simulated_passes ? v.simulated_passes + ' lượt là mô phỏng' : 'toàn bộ là thật'}</div></div>
+    <p class="note">${st.enough_data ? '' : '<b>Chưa đủ dữ liệu để tin chỉ số dừng</b> (cần ≥ 20 biển và ≥ 5 biển có đúng 2 người báo; mô phỏng cho thấy dưới mức này chỉ số báo cao hơn thật tới 26 pp). '}Chỉ tính các ô H3 đã có lượt đi qua; đường xe tải tạm lấy theo cấp đường OSM (trunk tới tertiary), chưa theo lưu lượng đơn Truck.</p>`;
+  $('covCells').innerHTML = `<table><tr><th>Ô H3</th><th>Km đường xe tải</th><th>Đã đi qua</th><th>Độ phủ</th></tr>${
+    v.cells.slice(0, 40).map(c => `<tr><td>${c.cell}</td><td>${c.truck_km}</td><td>${c.observed_km}</td><td><b style="color:${c.share >= .8 ? '#1a9850' : c.share >= .4 ? '#d97706' : '#b42318'}">${pct(c.share)}</b></td></tr>`).join('')}</table>`;
+  window.COVERAGE = v;
+}
+loadCoverage();
+
+/* ---------- directions ---------- */
+let map, layer, pts = {from: null, to: null}, picking = 'from';
+function initMap(){
+  if (map) return;
+  map = L.map('dmap').setView([10.776, 106.69], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {maxZoom: 20, subdomains: 'abc', attribution: '&copy; OpenStreetMap contributors, tiles OSM France'}).addTo(map);
+  layer = L.layerGroup().addTo(map);
+  map.on('click', e => { setPoint(picking, e.latlng.lat, e.latlng.lng, `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`); picking = picking === 'from' ? 'to' : 'from'; });
+}
+function setPoint(which, lat, lon, label){
+  pts[which] = {lat, lon}; $(which === 'from' ? 'qFrom' : 'qTo').value = label;
+  $('go').disabled = !(pts.from && pts.to); drawPins();
+}
+function pin(p, col, txt){ return L.circleMarker([p.lat, p.lon], {radius: 9, color: '#111827', weight: 2, fillColor: col, fillOpacity: 1}).bindTooltip(txt, {permanent: true, direction: 'top'}); }
+function drawPins(){ if (!map) return; layer.clearLayers(); if (pts.from) pin(pts.from, '#2563eb', 'Nhận').addTo(layer); if (pts.to) pin(pts.to, '#1a9850', 'Giao').addTo(layer); }
+function search(inp, box, which){
+  let t;
+  $(inp).addEventListener('input', () => { clearTimeout(t); const q = $(inp).value.trim(); if (q.length < 3){ $(box).hidden = true; return; }
+    t = setTimeout(async () => {
+      const list = await fetch('/v1/geocode?q=' + encodeURIComponent(q)).then(r => r.json()).catch(() => []);
+      $(box).innerHTML = list.map((x, i) => `<div data-i="${i}">${esc(x.label)}</div>`).join('') || '<div>Không tìm thấy</div>'; $(box).hidden = false;
+      $(box).querySelectorAll('[data-i]').forEach(el => el.onclick = () => { const x = list[+el.dataset.i]; $(box).hidden = true; setPoint(which, x.lat, x.lon, x.label); map && map.setView([x.lat, x.lon], 15); });
+    }, 350); });
+}
+search('qFrom', 'sFrom', 'from'); search('qTo', 'sTo', 'to');
+/* ---------- navigation view: routes, chip stack, drive simulation ---------- */
+let PROF = {};
+fetch('/v1/vehicle-profiles').then(r => r.json()).then(p => {
+  PROF = p;
+  $('veh').innerHTML = Object.entries(p).map(([k, v]) => `<option value="${k}">${k} · tải ${fmt(v.payload_kg)} kg · cao ${v.height_m_max} m</option>`).join('');
+  $('veh').value = p['TRUCK-1000'] ? 'TRUCK-1000' : Object.keys(p)[0]; $('veh').onchange();
+});
+$('veh').onchange = () => { const v = PROF[$('veh').value]; if (!v) return; $('wkg').value = v.payload_kg; $('hm').value = v.height_m_max; };
+const NAV_VI = {speed: 'Tốc độ', vehicle_ban: 'Cấm phương tiện', road_closed: 'Đường đóng', camera: 'Camera', upcoming: 'Biển sắp tới',
+  turn_ban: 'Cấm rẽ', no_stop_park: 'Cấm dừng/đỗ', toll: 'Trạm thu phí', residential: 'Khu dân cư', speed_sign: 'Biển tốc độ'};
+const LOOK = {vehicle_ban: 2, road_closed: 2, camera: 1, turn_ban: .5, no_stop_park: .3, toll: 2, speed_sign: 1};
+const MLY_CLS = {'no-heavy-goods-vehicles': 'truck_ban', 'no-heavy-goods-vehicles-or-tractors': 'truck_ban', 'no-motor-vehicles': 'car_ban',
+  'no-motor-vehicles-except-motorcycles': 'car_ban', 'height-limit': 'max_height', 'weight-limit': 'max_weight'};
+function ring(inner, size, fill = '#fff'){ return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="${fill}" stroke="#d00" stroke-width="4"/>${inner}</svg>`; }
+function square(inner, size){ return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" aria-hidden="true"><rect x="2" y="2" width="32" height="32" rx="5" fill="#1f5fd6"/>${inner}</svg>`; }
+function navIcon(e, size = 30){
+  const code = (e.code || '').split('--')[0];
+  switch (e.kind){
+    case 'vehicle_ban':
+      if (code === 'no-entry') return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="17" fill="#d00"/><rect x="8" y="15" width="20" height="6" fill="#fff"/></svg>`;
+      return svg(MLY_CLS[code] || e.code, size);
+    case 'road_closed': return ring('', size);
+    case 'speed_sign': return ring(`<text x="18" y="23" font-size="13" font-weight="800" text-anchor="middle" font-family="Arial" fill="#111">${e.value || ''}</text>`, size);
+    case 'turn_ban': {
+      const d = /right/.test(code) ? 'M12 26V16h9v-4l6 6-6 6v-4h-5v6z' : /u-turn/.test(code) ? 'M14 27V15a5 5 0 0 1 10 0v4h3l-5 6-5-6h3v-4a1 1 0 0 0-2 0v12z' : 'M24 26V16h-9v-4l-6 6 6 6v-4h5v6z';
+      return ring(`<path d="${d}" fill="#111"/><line x1="8" y1="8" x2="28" y2="28" stroke="#d00" stroke-width="3"/>`, size); }
+    case 'no_stop_park': return ring(code === 'no-stopping' ? '<line x1="8" y1="8" x2="28" y2="28" stroke="#d00" stroke-width="3"/><line x1="28" y1="8" x2="8" y2="28" stroke="#d00" stroke-width="3"/>' : '<line x1="8" y1="8" x2="28" y2="28" stroke="#d00" stroke-width="3"/>', size, '#1f5fd6');
+    case 'camera': return square('<rect x="8" y="13" width="15" height="11" rx="2" fill="#fff"/><path d="M23 16l6-3v11l-6-3z" fill="#fff"/>', size);
+    case 'toll': return square('<text x="18" y="16" font-size="7.5" font-weight="800" text-anchor="middle" font-family="Arial" fill="#fff">THU</text><text x="18" y="26" font-size="7.5" font-weight="800" text-anchor="middle" font-family="Arial" fill="#fff">PHÍ</text>', size);
+    case 'residential': return square('<path d="M7 26V18l6-5 6 5v8zM19 26v-6l5-4 5 4v6z" fill="#fff"/>', size);
+  }
+  return svg('', size);
+}
+let NAV = null, CUM = [], car = null, timer = null;
+function hav(a, b){ const R = 6371, r = Math.PI / 180, dl = (b[0] - a[0]) * r, dn = (b[1] - a[1]) * r;
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); }
+function cumKm(g){ const c = [0]; for (let i = 1; i < g.length; i++) c.push(c[i - 1] + hav(g[i - 1], g[i])); return c; }
+function along(g, c, km){ let i = 1; while (i < c.length - 1 && c[i] < km) i++; const f = c[i] > c[i - 1] ? (km - c[i - 1]) / (c[i] - c[i - 1]) : 0;
+  const p = [g[i - 1][0] + (g[i][0] - g[i - 1][0]) * Math.max(0, Math.min(1, f)), g[i - 1][1] + (g[i][1] - g[i - 1][1]) * Math.max(0, Math.min(1, f))];
+  const brg = Math.atan2((g[i][1] - g[i - 1][1]) * Math.cos(p[0] * Math.PI / 180), g[i][0] - g[i - 1][0]) * 180 / Math.PI; return {p, brg}; }
+const carIcon = brg => L.divIcon({className: '', iconSize: [34, 34], iconAnchor: [17, 17], html: `<svg width="34" height="34" viewBox="0 0 34 34" style="transform:rotate(${brg}deg)"><circle cx="17" cy="17" r="15" fill="#fff" opacity=".9"/><path d="M17 5l8 22-8-5-8 5z" fill="#1f5fd6" stroke="#fff" stroke-width="1.5"/></svg>`});
+const destIcon = L.divIcon({className: '', iconSize: [28, 38], iconAnchor: [14, 37], html: '<svg width="28" height="38" viewBox="0 0 28 38"><path d="M14 37C14 37 2 22 2 14a12 12 0 0 1 24 0c0 8-12 23-12 23z" fill="#1f5fd6" stroke="#fff" stroke-width="2"/><circle cx="14" cy="14" r="4.5" fill="#fff"/></svg>'});
+function bubble(g, frac, html, cls){ const c = cumKm(g), at = along(g, c, c[c.length - 1] * frac).p;
+  return L.marker(at, {interactive: false, zIndexOffset: 900, icon: L.divIcon({className: '', iconSize: [0, 0], html: `<div class="bub ${cls}">${html}</div>`})}); }
+function chip(icon, title, sub, hot){ return `<div class="chip${hot ? ' hot' : ''}">${icon}<div><b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>`; }
+const mtxt = km => km < 1 ? Math.max(0, Math.round(km * 1000 / 10) * 10) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
+function hud(km){
+  const j = NAV, html = [];
+  const run = j.speed.find(r => km >= r[0] && km <= r[1]);
+  html.push(run && run[2] ? `<div class="chip speed" title="Tốc độ tối đa theo OSM">${run[2]}</div>` : '<div class="chip speed unk" title="OSM không có maxspeed cho đoạn này">--</div>');
+  const ahead = j.events.filter(e => e.at_km >= km - .01), shown = new Set();
+  for (const k of j.kinds.slice(1)){
+    if (k === 'upcoming'){ html.push(null); continue; }
+    const e = ahead.find(x => x.kind === k && x.at_km - km <= (LOOK[k] || 1));
+    if (e){ shown.add(e); html.push(chip(navIcon(e, 30), e.label, (e.at_km - km < .02 ? 'đang qua' : 'còn ' + mtxt(e.at_km - km)) + (e.binds ? ' · cấm xe này' : ''), e.binds || k === 'road_closed')); }
+  }
+  const nx = ahead.find(x => !shown.has(x) && x.at_km - km <= 3);
+  const i = html.indexOf(null); html[i] = nx ? chip(navIcon(nx, 26), 'Sắp tới: ' + nx.label, 'còn ' + mtxt(nx.at_km - km)) : '';
+  $('hud').innerHTML = html.join('');
+  const pos = along(j.main.geometry, CUM, km); car.setLatLng(pos.p).setIcon(carIcon(pos.brg));
+  $('posTxt').textContent = `${mtxt(km)} / ${mtxt(CUM[CUM.length - 1])}`;
+}
+$('pos').oninput = () => { if (NAV) hud(CUM[CUM.length - 1] * $('pos').value / 1000); };
+$('play').onclick = () => {
+  if (timer){ clearInterval(timer); timer = null; $('play').textContent = '▶'; return; }
+  $('play').textContent = '❚❚';
+  timer = setInterval(() => { const v = +$('pos').value + 2; if (v > 1000){ clearInterval(timer); timer = null; $('play').textContent = '▶'; return; } $('pos').value = v; $('pos').oninput(); }, 80);
+};
+$('go').onclick = async () => {
+  $('go').disabled = true; $('out').innerHTML = '<p class="hint">Đang tính tuyến.</p>';
+  const q = new URLSearchParams({from_lat: pts.from.lat, from_lon: pts.from.lon, to_lat: pts.to.lat, to_lon: pts.to.lon,
+    weight_kg: $('wkg').value, height_m: $('hm').value, depart: $('dep').value});
+  q.set('profile', $('veh').value);
+  const r = await fetch('/v1/nav?' + q); const j = await r.json(); $('go').disabled = false;
+  if (!r.ok){ $('out').innerHTML = '<p class="hint">Không tính được tuyến: ' + esc(JSON.stringify(j.detail)) + '</p>'; return; }
+  NAV = j; CUM = cumKm(j.main.geometry); layer.clearLayers(); if (timer){ clearInterval(timer); timer = null; $('play').textContent = '▶'; }
+  const fmtT = x => `${Math.round(x.minutes)} phút<br>${String(x.km).replace('.', ',')} km`;
+  if (j.zone && j.zone.ring && j.zone.ring.length) L.polygon(j.zone.ring.map(p => [p[1], p[0]]), {color: j.zone.active ? '#d00' : '#98a2b3', weight: 1.5, dashArray: '5 5', fillColor: '#d00', fillOpacity: j.zone.active ? .07 : .02, interactive: false}).addTo(layer);
+  if (j.alt){ L.polyline(j.alt.geometry, {color: '#fff', weight: 10, opacity: .9}).addTo(layer); L.polyline(j.alt.geometry, {color: '#8db4ef', weight: 6, opacity: 1}).addTo(layer);
+    bubble(j.alt.geometry, .5, fmtT(j.alt), 'alt').addTo(layer); }
+  L.polyline(j.main.geometry, {color: '#fff', weight: 11, opacity: .95}).addTo(layer);
+  const line = L.polyline(j.main.geometry, {color: '#1f5fd6', weight: 7, opacity: 1}).addTo(layer);
+  bubble(j.main.geometry, .4, fmtT(j.main), '').addTo(layer);
+  j.events.filter(e => e.kind !== 'speed_sign').forEach(e => L.marker([e.lat, e.lon], {zIndexOffset: 800, icon: L.divIcon({className: '', iconSize: [22, 22], iconAnchor: [11, 11], html: navIcon(e, 22)})})
+    .bindTooltip(`${esc(e.label)} · km ${e.at_km} · ${e.source}`, {direction: 'top'}).addTo(layer));
+  L.marker(j.main.geometry[j.main.geometry.length - 1], {icon: destIcon, zIndexOffset: 950}).addTo(layer);
+  car = L.marker(j.main.geometry[0], {icon: carIcon(0), zIndexOffset: 1000}).addTo(layer);
+  map.fitBounds((j.alt ? line.getBounds().extend(L.polyline(j.alt.geometry).getBounds()) : line.getBounds()).pad(0.15));
+  $('hud').hidden = false; $('drive').hidden = false; $('pos').value = 0; hud(0);
+  const n = k => j.events.filter(e => e.kind === k).length;
+  $('out').innerHTML = `<div class="sum"><div>Tuyến đề xuất<b>${j.main.km} km</b>${Math.round(j.main.minutes)} phút</div><div>Tuyến thay thế<b>${j.alt ? j.alt.km + ' km' : '–'}</b>${j.alt ? Math.round(j.alt.minutes) + ' phút' : 'Valhalla không trả'}</div><div>Biển trên tuyến<b>${j.events.length}</b></div></div>
+    <p class="hint">${esc(j.main.note || '')}${j.alt ? '. Tuyến nhạt: ' + esc(j.alt.note) + (j.alt.binding ? ', vướng ' + j.alt.binding + ' lệnh cấm xe này' : '') : ''}.</p>
+    <p class="hint"><b>Vùng cấm tải nội thành</b> (polygon xấp xỉ theo QĐ 23, sai số ~1 km): ${j.zone.active ? `đang cấm ${esc(j.zone.legal_class === 'heavy_truck' ? 'xe tải nặng' : j.zone.legal_class === 'pickup' ? 'bán tải' : 'xe tải nhẹ')} giờ này (${esc(j.zone.hours)})` : 'không cấm loại xe này vào giờ đã chọn'}${j.zone.endpoints_inside.length ? '; điểm ' + j.zone.endpoints_inside.join(' và ') + ' nằm trong vùng nên không né được, chỉ cảnh báo' : ''}${j.zone.plain_enters_km != null && j.zone.active && !j.zone.endpoints_inside.length ? '; tuyến hiện tại đi vào vùng ở km ' + String(j.zone.plain_enters_km).replace('.', ',') : ''}.</p>
+    <table class="cmp"><tr><th>Chip</th><th>Trên tuyến</th></tr>${['vehicle_ban', 'road_closed', 'camera', 'turn_ban', 'no_stop_park', 'toll', 'speed_sign'].map(k => `<tr><td>${NAV_VI[k]}</td><td>${n(k)}</td></tr>`).join('')}
+      <tr><td>Khu dân cư</td><td>chưa có nguồn</td></tr></table>
+    <div style="margin-top:8px">${j.events.map(e => `<div class="evl">${navIcon(e, 26)}<b>km ${String(e.at_km).replace('.', ',')}</b><span>${esc(e.label)} · ${e.source === 'mapillary' ? 'Mapillary' : e.source === 'osm' ? 'OSM' : e.source === 'zone' ? 'vùng cấm QĐ 23' : 'tài xế'}${e.binds ? ' <span class="tag no">Cấm xe này</span>' : ''}</span></div>`).join('')}</div>
+    <p class="hint">Chip tốc độ lấy maxspeed của OSM (${fmt(j.sources.ways_with_maxspeed)} way có tag), "--" là đoạn chưa có. Camera và trạm thu phí lấy từ OSM (${j.sources.osm_points} điểm ở HCM). ${j.sources.mapillary_extra ? `Cấm rẽ, cấm dừng/đỗ, đường đóng, biển tốc độ lấy từ ${fmt(j.sources.mapillary_extra)} biển Mapillary.` : 'Chưa tải biển Mapillary cho cấm rẽ, cấm dừng/đỗ, đường đóng.'} Kéo thanh dưới bản đồ hoặc bấm ▶ để chạy thử.</p>`;
+};
+/* ---------- three layers ---------- */
+const LCOL = {mapillary: '#d00', driver_high: '#ff7f32', driver_med: '#eab308', truth_sim: '#64748b'};
+const LVI = {mapillary: 'Mapillary', driver_high: 'Tài xế điểm cao', driver_med: 'Tài xế điểm trung bình', truth_sim: 'Biển ẩn khỏi lớp Mapillary'};
+let LAYERS = null, layerGroup = null;
+async function drawLayers(){
+  if (!map) return;
+  if (!LAYERS) LAYERS = await fetch('/v1/layers').then(r => r.json());
+  if (!layerGroup) layerGroup = L.layerGroup().addTo(map);
+  layerGroup.clearLayers();
+  const on = new Set([...document.querySelectorAll('.lay:checked')].map(x => x.value));
+  ['truth_sim', 'driver_med', 'driver_high', 'mapillary'].filter(k => on.has(k)).forEach(k => LAYERS[k].forEach(x => {
+    if (x.edge_geometry) L.polyline(x.edge_geometry, {color: LCOL[k], weight: 4, opacity: k === 'truth_sim' ? .35 : .6, dashArray: k === 'driver_med' ? '6 5' : null}).addTo(layerGroup);
+    L.circleMarker([x.lat, x.lon], {radius: k === 'truth_sim' ? 4 : 6, color: '#fff', weight: 1.5, fillColor: LCOL[k], fillOpacity: 1})
+      .bindTooltip(`${LVI[k]}: ${CLS_VI[x.cls] || x.cls}${x.score != null ? ', score ' + x.score + ', ' + x.reports + ' report' : ''}${x.correct === false ? ', <b>biển sai</b>' : ''}${k === 'truth_sim' ? (x.reported ? ', có ' + x.reported + ' report' : ', chưa ai báo') : ''}`).addTo(layerGroup);
+  }));
+}
+document.querySelectorAll('.lay').forEach(x => x.onchange = drawLayers);
+fetch('/v1/trips/layer-demos').then(r => r.json()).then(list => {
+  $('demoSel').innerHTML = '<option value="">Chọn một chuyến</option>' + list.map((x, i) => `<option value="${i}">${esc(x.name)}</option>`).join('');
+  $('demoSel').onchange = e => { const x = list[+e.target.value]; if (!x) return; initMap();
+    setPoint('from', x.from_lat, x.from_lon, `${x.from_lat}, ${x.from_lon}`); setPoint('to', x.to_lat, x.to_lon, `${x.to_lat}, ${x.to_lon}`); $('cmp').click(); };
+});
+const SCOL = {none: '#94a3b8', m: '#2563eb', mh: '#1a9850', mhm: '#7c3aed'};
+$('cmp').onclick = async () => {
+  $('cmp').disabled = true; $('out').innerHTML = '<p class="hint">Đang gọi Valhalla cho 4 mức dữ liệu, mất 5 tới 20 giây.</p>';
+  const q = new URLSearchParams({from_lat: pts.from.lat, from_lon: pts.from.lon, to_lat: pts.to.lat, to_lon: pts.to.lon,
+    weight_kg: $('wkg').value, height_m: $('hm').value, depart: $('dep').value});
+  const r = await fetch('/v1/trip/compare?' + q); const j = await r.json(); $('cmp').disabled = false;
+  if (!r.ok){ $('out').innerHTML = '<p class="hint">Lỗi: ' + esc(JSON.stringify(j.detail)) + '</p>'; return; }
+  drawPins(); await drawLayers();
+  let bounds = null;
+  j.scenarios.filter(x => x.geometry).forEach((x, i) => { const l = L.polyline(x.geometry, {color: SCOL[x.key], weight: 7 - i * 1.3, opacity: .85}).addTo(layer); bounds = bounds ? bounds.extend(l.getBounds()) : l.getBounds(); });
+  if (bounds) map.fitBounds(bounds.pad(0.25));
+  $('out').innerHTML = `<table class="cmp"><tr><th>Dữ liệu biển</th><th>km</th><th>phút</th><th>Né</th><th>Vi phạm thật</th><th>Chặn nhầm</th></tr>${
+    j.scenarios.map(x => `<tr><td><span class="sw" style="background:${SCOL[x.key]}"></span>${esc(x.label)}</td><td>${x.km ?? '–'}</td><td>${x.minutes ?? '–'}</td><td>${x.signs_avoided ?? '–'}</td>
+      <td><b style="color:${x.truth_violations ? '#b42318' : '#1a7f37'}">${x.truth_violations ?? '–'}</b></td><td>${x.blocked_on_false_signs ?? '–'}</td></tr>`).join('')}</table>
+    ${j.scenarios.map(x => x.violations && x.violations.length ? `<p class="hint"><b>${esc(x.label)}</b> vẫn đi qua: ${x.violations.map(v => esc(v.road || 'không tên') + ' (' + (v.source === 'mapillary' ? 'biển thật' : v.source) + ')').join(', ')}</p>` : '').join('')}
+    <p class="hint">Vi phạm thật đếm trên ${j.layer_sizes.truth_all} biển Mapillary thật đã xác minh. Mô phỏng: lớp Mapillary chỉ thấy ${j.layer_sizes.mapillary} biển (giả định phủ một phần), ${j.layer_sizes.truth_sim} biển cấm còn lại do tài xế báo qua pipeline chấm điểm, ra ${j.layer_sizes.driver_high} biển điểm cao và ${j.layer_sizes.driver_med} biển điểm trung bình (có biển sai). Valhalla và vị trí biển là thật.</p>`;
+};
+const _setPoint = setPoint;
+setPoint = function(w, a, b, l){ _setPoint(w, a, b, l); $('cmp').disabled = !(pts.from && pts.to); };
+
+(() => {  // #directions?from=lat,lon&to=lat,lon opens a trip directly
+  if (location.hash.startsWith('#directions')) tab('directions');
+  if (location.hash.startsWith('#review')) tab('review');
+  if (location.hash.startsWith('#capture')) tab('capture');
+  const u = new URLSearchParams(location.search);
+  if (u.get('from') && u.get('to')){
+    tab('directions');
+    const [a, b] = u.get('from').split(',').map(Number), [c, d] = u.get('to').split(',').map(Number);
+    setPoint('from', a, b, u.get('fromName') || `${a}, ${b}`); setPoint('to', c, d, u.get('toName') || `${c}, ${d}`);
+    if (u.get('t')) $('dep').value = u.get('t');
+    if (u.get('kg')){ $('wkg').value = u.get('kg'); }
+    (u.get('cmp') ? $('cmp') : $('go')).click();
+  }
+})();
 </script>
 </body>
 </html>
