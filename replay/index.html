@@ -98,27 +98,27 @@ footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var
 @media (max-width:820px){.ucgrid{grid-template-columns:1fr}#ucmap{height:340px}}
 
 /* ---- AI / computer-vision theme (dark by default; ?theme=light keeps the light look) ---- */
-:root:not([data-theme="light"]){--navy:#EAF6FF;--bg:#050914;--paper:rgba(14,22,46,.78);--line:#1E2F55;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#101B3A;--cyan:#22D3EE;--violet:#8B5CF6;--orange-tint:rgba(255,127,50,.12)}
-:root:not([data-theme="light"]) body{background:radial-gradient(1100px 600px at 90% -5%,rgba(139,92,246,.25),transparent 60%),radial-gradient(900px 500px at -5% 30%,rgba(34,211,238,.14),transparent 60%),linear-gradient(rgba(34,211,238,.05) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(34,211,238,.05) 1px,transparent 1px) 0 0/48px 48px,#050914;background-attachment:fixed}
+:root:not([data-theme="light"]){--navy:#EAF6FF;--bg:#0E1C3D;--paper:rgba(22,40,84,.72);--line:#2B4277;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#1A2F63;--cyan:#FF9A5C;--violet:#3D7BFF;--orange-tint:rgba(255,127,50,.12)}
+:root:not([data-theme="light"]) body{background:radial-gradient(1100px 600px at 90% -5%,rgba(61,123,255,.25),transparent 60%),radial-gradient(900px 500px at -5% 30%,rgba(255,127,50,.14),transparent 60%),linear-gradient(rgba(255,127,50,.05) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(255,127,50,.05) 1px,transparent 1px) 0 0/48px 48px,#0E1C3D;background-attachment:fixed}
 h1,h2,h3{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;letter-spacing:-.3px}
-:root:not([data-theme="light"]) h1{background:linear-gradient(90deg,#FFFFFF,#A5F3FC 55%,#C4B5FD);-webkit-background-clip:text;background-clip:text;color:transparent}
+:root:not([data-theme="light"]) h1{background:linear-gradient(90deg,#FFFFFF,#FFC9A3 55%,#9FC0FF);-webkit-background-clip:text;background-clip:text;color:transparent}
 .eyebrow,.step b,.uc .ucflow button small,.stat b{font-family:"JetBrains Mono",monospace}
-:root:not([data-theme="light"]) .eyebrow{color:#22D3EE}
-:root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .panel,:root:not([data-theme="light"]) .ucpanel,:root:not([data-theme="light"]) .pick,:root:not([data-theme="light"]) .step,:root:not([data-theme="light"]) .ucflow button{backdrop-filter:blur(6px);border-color:rgba(34,211,238,.28)}
-:root:not([data-theme="light"]) .stat b{background:linear-gradient(90deg,#22D3EE,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent}
-:root:not([data-theme="light"]) .step[aria-current="true"],:root:not([data-theme="light"]) .ucflow button[aria-current="true"]{background:linear-gradient(90deg,#8B5CF6,#22D3EE);color:#050914;border-color:transparent}
-:root:not([data-theme="light"]) .step[aria-current="true"] b{color:#050914}
-:root:not([data-theme="light"]) .pick[aria-pressed="true"]{border-color:#22D3EE;box-shadow:0 0 0 1px #22D3EE,0 0 22px rgba(34,211,238,.45)}
+:root:not([data-theme="light"]) .eyebrow{color:#FF9A5C}
+:root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .panel,:root:not([data-theme="light"]) .ucpanel,:root:not([data-theme="light"]) .pick,:root:not([data-theme="light"]) .step,:root:not([data-theme="light"]) .ucflow button{backdrop-filter:blur(6px);border-color:rgba(255,127,50,.28)}
+:root:not([data-theme="light"]) .stat b{background:linear-gradient(90deg,#FF9A5C,#7FA8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+:root:not([data-theme="light"]) .step[aria-current="true"],:root:not([data-theme="light"]) .ucflow button[aria-current="true"]{background:linear-gradient(90deg,#3D7BFF,#FF9A5C);color:#0E1C3D;border-color:transparent}
+:root:not([data-theme="light"]) .step[aria-current="true"] b{color:#0E1C3D}
+:root:not([data-theme="light"]) .pick[aria-pressed="true"]{border-color:#FF9A5C;box-shadow:0 0 0 1px #FF9A5C,0 0 22px rgba(255,127,50,.45)}
 :root:not([data-theme="light"]) .btn:not(.ghost){background:linear-gradient(90deg,#FF7F32,#E8466F);color:#fff}
-.mapbox,#ucmap{box-shadow:0 0 0 1px rgba(34,211,238,.25),0 20px 60px -30px rgba(34,211,238,.6)}
-.photos figure,.read figure{position:relative}
-.photos figure::before,.read figure:first-child::before{content:"";position:absolute;inset:6px;border:2px solid transparent;border-image:linear-gradient(135deg,#22D3EE,#8B5CF6) 1;pointer-events:none;z-index:2}
-.photos figure::after,.read figure:first-child::after{content:"";position:absolute;left:6px;right:6px;height:2px;top:8px;background:linear-gradient(90deg,transparent,#22D3EE,transparent);box-shadow:0 0 14px #22D3EE;animation:scan 2.8s ease-in-out infinite;z-index:3}
+.mapbox,#ucmap{box-shadow:0 0 0 1px rgba(255,127,50,.25),0 20px 60px -30px rgba(255,127,50,.6)}
+.photos figure,.read figure{position:relative;margin-top:26px}
+.photos figure::before,.read figure:first-child::before{content:"";position:absolute;inset:6px;border:2px solid transparent;border-image:linear-gradient(135deg,#FF9A5C,#3D7BFF) 1;pointer-events:none;z-index:2}
+.photos figure::after,.read figure:first-child::after{content:"";position:absolute;left:6px;right:6px;height:2px;top:8px;background:linear-gradient(90deg,transparent,#FF9A5C,transparent);box-shadow:0 0 14px #FF9A5C;animation:scan 2.8s ease-in-out infinite;z-index:3}
 @keyframes scan{0%{top:8px}50%{top:calc(100% - 40px)}100%{top:8px}}
-.det{position:absolute;left:8px;top:8px;z-index:4;font:700 11px "JetBrains Mono",monospace;background:#22D3EE;color:#050914;padding:2px 6px;border-radius:4px}
+.det{position:absolute;left:0;top:-24px;z-index:4;font:700 11px "JetBrains Mono",monospace;background:#FF9A5C;color:#0E1C3D;padding:2px 6px;border-radius:4px}
 .cvbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font:600 12px "JetBrains Mono",monospace;color:var(--muted)}
 :root:not([data-theme="light"]) .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.7)}
-.cvbar span::before{content:"● ";color:#22D3EE}
+.cvbar span::before{content:"● ";color:#FF9A5C}
 </style>
 </head>
 <body>
@@ -240,7 +240,7 @@ function go(i){
     map.fitBounds(L.latLngBounds(a.geometry.concat(b.geometry)).pad(.15));
   }else{
     P.innerHTML=`<h2>7 · Tài xế đi và được báo biển cấm</h2><p class="lead">Tới gần biển cấm, app hiện chip và đọc to.</p>
-    <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button><select id="dvsel" class="btn ghost" aria-label="Giọng đọc"></select></div>
+    <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button></div>
     <div class="gpsmsg" id="gpsmsg"></div><ul class="wlog" id="wlog"></ul>`;
     const g=D.route_example.after.geometry;
     L.polyline(g,{color:"#FF7F32",weight:7,opacity:.9}).addTo(lay);
@@ -250,7 +250,7 @@ function go(i){
     $("phone").innerHTML="";$("phone").classList.add("on");
     $("dsim").onclick=()=>{endDrive();simulate(g,ev)};
     $("dgps").onclick=()=>{endDrive();liveGps()};
-    $("dvoice").onclick=()=>{VOICE=!VOICE;$("dvoice").textContent=VOICE?"🔊 Đọc to: bật":"🔇 Đọc to: tắt"};fillVoices();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=fillVoices;$("dvsel").onchange=e=>{VSEL=e.target.value;say("Xin chào, đây là giọng đọc cảnh báo biển báo")};
+    $("dvoice").onclick=()=>{VOICE=!VOICE;$("dvoice").textContent=VOICE?"🔊 Đọc to: bật":"🔇 Đọc to: tắt"};fillVoices();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=fillVoices;
   }
 }
 let VOICE=true,SIM=null,WATCH=null,CAR=null,VSEL="",ACTIVE=[];
@@ -268,7 +268,7 @@ function signsAlong(g){
   const ev=[...out.values()].sort((x,y)=>x.at-y.at);ev.total=cum[cum.length-1];ev.cum=cum;return ev}
 function name(r){return (D.names&&D.names[r[3]])||KIND[r[2]][0]}
 function voices(){if(!window.speechSynthesis)return[];const all=speechSynthesis.getVoices();const vi=all.filter(x=>x.lang&&x.lang.toLowerCase().startsWith("vi"));return vi.length?vi:all}
-function fillVoices(){const el=$("dvsel");if(!el)return;const vs=voices();el.innerHTML=vs.length?vs.map(v=>`<option value="${v.name}" ${v.name===VSEL?"selected":""}>${v.name} (${v.lang})</option>`).join(""):"<option>Máy chưa có giọng đọc</option>";if(!VSEL&&vs.length){const pref=vs.find(v=>/google|linh|an|hoaimy|namminh/i.test(v.name))||vs[0];VSEL=pref.name;el.value=VSEL}}
+function fillVoices(){const vs=voices();if(!VSEL&&vs.length){const pref=vs.find(v=>/google|linh|an|hoaimy|namminh/i.test(v.name))||vs[0];VSEL=pref.name}}
 function say(t){if(!VOICE||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang="vi-VN";const v=voices().find(x=>x.name===VSEL)||voices()[0];if(v)u.voice=v;u.rate=.9;u.pitch=1;speechSynthesis.speak(u)}
 function warn(r,dist,key){
   const n=name(r),m=Math.max(10,Math.round(dist/10)*10);
