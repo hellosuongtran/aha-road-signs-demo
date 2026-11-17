@@ -6,7 +6,7 @@
 <title>AHA Road Signs Replay</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#14213D;--orange:#FF7F32;--orange-ink:#C2531A;--bg:#F4F6F9;--paper:#FFFFFF;--line:#DDE3EA;--body:#33415C;--muted:#6B7A90;--ok:#1F8A5B;--warn:#B7791F;--chip:#14213D}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--navy:#E8EEF6;--bg:#0E1524;--paper:#16203A;--line:#2A3756;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#22305A}}
@@ -100,9 +100,9 @@ footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var
 /* ---- AI / computer-vision theme (dark by default; ?theme=light keeps the light look) ---- */
 :root:not([data-theme="light"]){--navy:#EAF6FF;--bg:#0E1C3D;--paper:rgba(22,40,84,.72);--line:#2B4277;--body:#C9D6E4;--muted:#8DA0BC;--orange-ink:#FF9A5C;--ok:#4CC38A;--chip:#1A2F63;--cyan:#FF9A5C;--violet:#3D7BFF;--orange-tint:rgba(255,127,50,.12)}
 :root:not([data-theme="light"]) body{background:radial-gradient(1100px 600px at 90% -5%,rgba(61,123,255,.25),transparent 60%),radial-gradient(900px 500px at -5% 30%,rgba(255,127,50,.14),transparent 60%),linear-gradient(rgba(255,127,50,.05) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(255,127,50,.05) 1px,transparent 1px) 0 0/48px 48px,#0E1C3D;background-attachment:fixed}
-h1,h2,h3{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;letter-spacing:-.3px}
+h1,h2,h3{font-family:"Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.3px}
 :root:not([data-theme="light"]) h1{background:linear-gradient(90deg,#FFFFFF,#FFC9A3 55%,#9FC0FF);-webkit-background-clip:text;background-clip:text;color:transparent}
-.eyebrow,.step b,.uc .ucflow button small,.stat b{font-family:"JetBrains Mono",monospace}
+.eyebrow,.step b,.uc .ucflow button small,.stat b{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
 :root:not([data-theme="light"]) .eyebrow{color:#FF9A5C}
 :root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .panel,:root:not([data-theme="light"]) .ucpanel,:root:not([data-theme="light"]) .pick,:root:not([data-theme="light"]) .step,:root:not([data-theme="light"]) .ucflow button{backdrop-filter:blur(6px);border-color:rgba(255,127,50,.28)}
 :root:not([data-theme="light"]) .stat b{background:linear-gradient(90deg,#FF9A5C,#7FA8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -115,8 +115,8 @@ h1,h2,h3{font-family:"Space Grotesk","Plus Jakarta Sans",sans-serif;letter-spaci
 .photos figure::before,.read figure:first-child::before{content:"";position:absolute;inset:6px;border:2px solid transparent;border-image:linear-gradient(135deg,#FF9A5C,#3D7BFF) 1;pointer-events:none;z-index:2}
 .photos figure::after,.read figure:first-child::after{content:"";position:absolute;left:6px;right:6px;height:2px;top:8px;background:linear-gradient(90deg,transparent,#FF9A5C,transparent);box-shadow:0 0 14px #FF9A5C;animation:scan 2.8s ease-in-out infinite;z-index:3}
 @keyframes scan{0%{top:8px}50%{top:calc(100% - 40px)}100%{top:8px}}
-.det{position:absolute;left:0;top:-24px;z-index:4;font:700 11px "JetBrains Mono",monospace;background:#FF9A5C;color:#0E1C3D;padding:2px 6px;border-radius:4px}
-.cvbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font:600 12px "JetBrains Mono",monospace;color:var(--muted)}
+.det{position:absolute;left:0;top:-24px;z-index:4;font:700 11px "Plus Jakarta Sans",system-ui,sans-serif;background:#FF9A5C;color:#0E1C3D;padding:2px 6px;border-radius:4px}
+.cvbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font:600 12px "Plus Jakarta Sans",system-ui,sans-serif;color:var(--muted)}
 :root:not([data-theme="light"]) .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.7)}
 .cvbar span::before{content:"● ";color:#FF9A5C}
 </style>
