@@ -40,8 +40,8 @@
 106.593
 ],
 "b": [
-10.729,
-106.718
+10.7255,
+106.7195
 ]
 }
 ],
@@ -57,78 +57,10 @@
 "entries": [
 {
 "kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"name": "Tân Bình (Cộng Hòa) → Quận 7 (Phú Mỹ Hưng)",
 "params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
-"to_lat": "10.729",
-"to_lon": "106.718",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "07:30",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n108.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
-"to_lat": "10.729",
-"to_lon": "106.718",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "11:00",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n109.json",
-"zone_active": false,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
-"to_lat": "10.729",
-"to_lon": "106.718",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "07:30",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n110.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
-"to_lat": "10.729",
-"to_lon": "106.718",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "11:00",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n111.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
+"from_lat": "10.8015",
+"from_lon": "106.642",
 "to_lat": "10.729",
 "to_lon": "106.718",
 "weight_kg": "850",
@@ -136,241 +68,29 @@
 "depart": "07:30",
 "profile": "VAN-1000"
 },
-"file": "nav/n106.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.886",
-"from_lon": "106.593",
-"to_lat": "10.729",
-"to_lon": "106.718",
-"weight_kg": "850",
-"height_m": "1.95",
-"depart": "11:00",
-"profile": "VAN-1000"
-},
-"file": "nav/n107.json",
-"zone_active": false,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "07:30",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n102.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "11:00",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n103.json",
-"zone_active": false,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "07:30",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n104.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "11:00",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n105.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "850",
-"height_m": "1.95",
-"depart": "07:30",
-"profile": "VAN-1000"
-},
-"file": "nav/n100.json",
-"zone_active": true,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.724",
-"to_lon": "106.608",
-"weight_kg": "850",
-"height_m": "1.95",
-"depart": "11:00",
-"profile": "VAN-1000"
-},
-"file": "nav/n101.json",
-"zone_active": false,
-"ends_inside": []
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "07:30",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n8.json",
+"file": "nav/n0.json",
 "zone_active": true,
 "ends_inside": [
-"trả"
+"đón"
 ]
 },
 {
 "kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
+"name": "Tân Bình (Cộng Hòa) → Quận 7 (Phú Mỹ Hưng)",
 "params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "11:00",
-"profile": "TRUCK-1000"
-},
-"file": "nav/n9.json",
-"zone_active": false,
-"ends_inside": [
-"trả"
-]
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "07:30",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n10.json",
-"zone_active": true,
-"ends_inside": [
-"trả"
-]
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
-"weight_kg": "5000",
-"height_m": "3.5",
-"depart": "11:00",
-"profile": "TRUCK-5000"
-},
-"file": "nav/n11.json",
-"zone_active": true,
-"ends_inside": [
-"trả"
-]
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
-"weight_kg": "850",
-"height_m": "1.95",
-"depart": "07:30",
-"profile": "VAN-1000"
-},
-"file": "nav/n6.json",
-"zone_active": true,
-"ends_inside": [
-"trả"
-]
-},
-{
-"kind": "nav",
-"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
-"params": {
-"from_lat": "10.849",
-"from_lon": "106.772",
-"to_lat": "10.7445",
-"to_lon": "106.6125",
+"from_lat": "10.8015",
+"from_lon": "106.642",
+"to_lat": "10.729",
+"to_lon": "106.718",
 "weight_kg": "850",
 "height_m": "1.95",
 "depart": "11:00",
 "profile": "VAN-1000"
 },
-"file": "nav/n7.json",
+"file": "nav/n1.json",
 "zone_active": false,
 "ends_inside": [
-"trả"
+"đón"
 ]
 },
 {
@@ -451,83 +171,321 @@
 },
 {
 "kind": "nav",
-"name": "Tân Bình (Cộng Hòa) → Quận 7 (Phú Mỹ Hưng)",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
 "params": {
-"from_lat": "10.8015",
-"from_lon": "106.642",
-"to_lat": "10.729",
-"to_lon": "106.718",
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
 "weight_kg": "850",
 "height_m": "1.95",
 "depart": "07:30",
 "profile": "VAN-1000"
 },
-"file": "nav/n0.json",
+"file": "nav/n6.json",
 "zone_active": true,
 "ends_inside": [
-"đón"
+"trả"
 ]
 },
 {
 "kind": "nav",
-"name": "Tân Bình (Cộng Hòa) → Quận 7 (Phú Mỹ Hưng)",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
 "params": {
-"from_lat": "10.8015",
-"from_lon": "106.642",
-"to_lat": "10.729",
-"to_lon": "106.718",
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
 "weight_kg": "850",
 "height_m": "1.95",
 "depart": "11:00",
 "profile": "VAN-1000"
 },
-"file": "nav/n1.json",
+"file": "nav/n7.json",
 "zone_active": false,
 "ends_inside": [
-"đón"
+"trả"
 ]
 },
 {
-"kind": "compare",
-"name": "Qua Ba Vì (có tài xế báo)",
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
 "params": {
-"from_lat": "10.777678",
-"from_lon": "106.656153",
-"to_lat": "10.78239",
-"to_lon": "106.668023",
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
 "weight_kg": "950",
 "height_m": "2.65",
-"depart": "07:30"
+"depart": "07:30",
+"profile": "TRUCK-1000"
 },
-"file": "nav/c4.json"
+"file": "nav/n8.json",
+"zone_active": true,
+"ends_inside": [
+"trả"
+]
 },
 {
-"kind": "compare",
-"name": "Qua Hoàng Văn Thụ (có tài xế báo)",
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
 "params": {
-"from_lat": "10.800968",
-"from_lon": "106.659177",
-"to_lat": "10.799654",
-"to_lon": "106.671911",
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
 "weight_kg": "950",
 "height_m": "2.65",
-"depart": "07:30"
+"depart": "11:00",
+"profile": "TRUCK-1000"
 },
-"file": "nav/c2.json"
+"file": "nav/n9.json",
+"zone_active": false,
+"ends_inside": [
+"trả"
+]
 },
 {
-"kind": "compare",
-"name": "Qua Hàm Nghi (có tài xế báo)",
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
 "params": {
-"from_lat": "10.772392",
-"from_lon": "106.693082",
-"to_lat": "10.76935",
-"to_lon": "106.705504",
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "07:30",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n10.json",
+"zone_active": true,
+"ends_inside": [
+"trả"
+]
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → Bình Tân (Aeon Tên Lửa)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.7445",
+"to_lon": "106.6125",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "11:00",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n11.json",
+"zone_active": true,
+"ends_inside": [
+"trả"
+]
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
+"weight_kg": "850",
+"height_m": "1.95",
+"depart": "07:30",
+"profile": "VAN-1000"
+},
+"file": "nav/n12.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
+"weight_kg": "850",
+"height_m": "1.95",
+"depart": "11:00",
+"profile": "VAN-1000"
+},
+"file": "nav/n13.json",
+"zone_active": false,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
 "weight_kg": "950",
 "height_m": "2.65",
-"depart": "07:30"
+"depart": "07:30",
+"profile": "TRUCK-1000"
 },
-"file": "nav/c8.json"
+"file": "nav/n14.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "11:00",
+"profile": "TRUCK-1000"
+},
+"file": "nav/n15.json",
+"zone_active": false,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "07:30",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n16.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Thủ Đức (ngã tư) → An Lạc (QL1A, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.849",
+"from_lon": "106.772",
+"to_lat": "10.724",
+"to_lon": "106.608",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "11:00",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n17.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "850",
+"height_m": "1.95",
+"depart": "07:30",
+"profile": "VAN-1000"
+},
+"file": "nav/n18.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "850",
+"height_m": "1.95",
+"depart": "11:00",
+"profile": "VAN-1000"
+},
+"file": "nav/n19.json",
+"zone_active": false,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30",
+"profile": "TRUCK-1000"
+},
+"file": "nav/n20.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "11:00",
+"profile": "TRUCK-1000"
+},
+"file": "nav/n21.json",
+"zone_active": false,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "07:30",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n22.json",
+"zone_active": true,
+"ends_inside": []
+},
+{
+"kind": "nav",
+"name": "Hóc Môn → Quận 7 (Phú Mỹ Hưng, xuyên vùng cấm)",
+"params": {
+"from_lat": "10.886",
+"from_lon": "106.593",
+"to_lat": "10.7255",
+"to_lon": "106.7195",
+"weight_kg": "5000",
+"height_m": "3.5",
+"depart": "11:00",
+"profile": "TRUCK-5000"
+},
+"file": "nav/n23.json",
+"zone_active": true,
+"ends_inside": []
 },
 {
 "kind": "compare",
@@ -559,45 +517,17 @@
 },
 {
 "kind": "compare",
-"name": "Qua Phan Đăng Lưu (có tài xế báo)",
+"name": "Qua Hoàng Văn Thụ (có tài xế báo)",
 "params": {
-"from_lat": "10.803442",
-"from_lon": "106.688833",
-"to_lat": "10.80191",
-"to_lon": "106.701541",
+"from_lat": "10.800968",
+"from_lon": "106.659177",
+"to_lat": "10.799654",
+"to_lon": "106.671911",
 "weight_kg": "950",
 "height_m": "2.65",
 "depart": "07:30"
 },
-"file": "nav/c5.json"
-},
-{
-"kind": "compare",
-"name": "Qua Sư Vạn Hạnh (có tài xế báo)",
-"params": {
-"from_lat": "10.761807",
-"from_lon": "106.672655",
-"to_lat": "10.774193",
-"to_lon": "106.670431",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "07:30"
-},
-"file": "nav/c9.json"
-},
-{
-"kind": "compare",
-"name": "Qua Trần Xuân Soạn (có tài xế báo)",
-"params": {
-"from_lat": "10.751911",
-"from_lon": "106.722151",
-"to_lat": "10.751911",
-"to_lon": "106.709349",
-"weight_kg": "950",
-"height_m": "2.65",
-"depart": "07:30"
-},
-"file": "nav/c6.json"
+"file": "nav/c2.json"
 },
 {
 "kind": "compare",
@@ -615,6 +545,48 @@
 },
 {
 "kind": "compare",
+"name": "Qua Ba Vì (có tài xế báo)",
+"params": {
+"from_lat": "10.777678",
+"from_lon": "106.656153",
+"to_lat": "10.78239",
+"to_lon": "106.668023",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30"
+},
+"file": "nav/c4.json"
+},
+{
+"kind": "compare",
+"name": "Qua Phan Đăng Lưu (có tài xế báo)",
+"params": {
+"from_lat": "10.803442",
+"from_lon": "106.688833",
+"to_lat": "10.80191",
+"to_lon": "106.701541",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30"
+},
+"file": "nav/c5.json"
+},
+{
+"kind": "compare",
+"name": "Qua Trần Xuân Soạn (có tài xế báo)",
+"params": {
+"from_lat": "10.751911",
+"from_lon": "106.722151",
+"to_lat": "10.751911",
+"to_lon": "106.709349",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30"
+},
+"file": "nav/c6.json"
+},
+{
+"kind": "compare",
 "name": "Qua Đường 10C (có tài xế báo)",
 "params": {
 "from_lat": "10.763",
@@ -626,6 +598,34 @@
 "depart": "07:30"
 },
 "file": "nav/c7.json"
+},
+{
+"kind": "compare",
+"name": "Qua Hàm Nghi (có tài xế báo)",
+"params": {
+"from_lat": "10.772392",
+"from_lon": "106.693082",
+"to_lat": "10.76935",
+"to_lon": "106.705504",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30"
+},
+"file": "nav/c8.json"
+},
+{
+"kind": "compare",
+"name": "Qua Sư Vạn Hạnh (có tài xế báo)",
+"params": {
+"from_lat": "10.761807",
+"from_lon": "106.672655",
+"to_lat": "10.774193",
+"to_lon": "106.670431",
+"weight_kg": "950",
+"height_m": "2.65",
+"depart": "07:30"
+},
+"file": "nav/c9.json"
 }
 ]
 }
