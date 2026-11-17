@@ -66,6 +66,11 @@ figcaption{font-size:12px;color:var(--muted);margin-top:4px}
 .chip img{width:30px;height:30px;background:#fff;border-radius:50%;object-fit:contain}
 .chip small{display:block;color:#9DB3CC;font-size:11px}
 .chip.hot{outline:2px solid var(--orange)}
+.drivebar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.wlog{margin:10px 0 0;padding:0;list-style:none;font-size:14px;max-height:190px;overflow:auto}
+.wlog li{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.wlog img{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:50%}
+.gpsmsg{font-size:13px;color:var(--body);margin-top:6px}
 @keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 .legend{position:absolute;left:12px;bottom:12px;z-index:500;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;display:none}
 .legend.on{display:block}
@@ -97,7 +102,7 @@ footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const KIND={vehicle_ban:["Cấm phương tiện","#C2531A"],turn_ban:["Cấm rẽ","#2B6CB0"],no_stop_park:["Cấm dừng / đỗ","#7B61FF"],speed_sign:["Tốc độ","#1F8A5B"],road_closed:["Đường đóng","#9B2C2C"]};
-const STEPS=["Tài xế chụp","AI đọc biển","Gộp lần thấy","Gắn đường + kiểm","Lên bản đồ","Giá + tuyến"];
+const STEPS=["Tài xế chụp","AI đọc biển","Gộp lần thấy","Gắn đường + kiểm","Lên bản đồ","Giá + tuyến","Tài xế được báo"];
 let D,cur=0,step=0,timer=null,map,lay,layer;
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString("vi-VN");
@@ -112,8 +117,8 @@ function init(){
   $("steps").innerHTML=STEPS.map((t,i)=>`<button class="step" data-i="${i}"><b>${i+1}</b>${t}</button>`).join("")+`<div class="ctrl"><button class="btn ghost" id="prev">‹ Lùi</button><button class="btn" id="play">▶ Chạy cả luồng</button><button class="btn ghost" id="next">Tiếp ›</button></div>`;
   $("steps").onclick=e=>{const b=e.target.closest(".step");if(b){stop();go(+b.dataset.i)}};
   $("prev").onclick=()=>{stop();go(Math.max(0,step-1))};
-  $("next").onclick=()=>{stop();go(Math.min(5,step+1))};
-  $("play").onclick=()=>{if(timer){stop();return}go(0);$("play").textContent="❚❚ Dừng";timer=setInterval(()=>{if(step>=5){stop();return}go(step+1)},4500)};
+  $("next").onclick=()=>{stop();go(Math.min(6,step+1))};
+  $("play").onclick=()=>{if(timer){stop();return}go(0);$("play").textContent="❚❚ Dừng";timer=setInterval(()=>{if(step>=6){stop();return}go(step+1)},4500)};
   map=L.map("map",{zoomControl:true,attributionControl:true}).setView([10.78,106.69],14);
   L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{maxZoom:20,attribution:"© OpenStreetMap contributors · © Mapillary"}).addTo(map);
   lay=L.layerGroup().addTo(map);
@@ -123,12 +128,13 @@ function init(){
   const q=new URLSearchParams(location.search);
   if(q.get("theme"))document.documentElement.dataset.theme=q.get("theme");
   cur=Math.min(D.demo.length-1,Math.max(0,+(q.get("sign")||1)-1));[...$("picker").children].forEach((x,j)=>x.setAttribute("aria-pressed",j===cur));
-  go(Math.min(5,Math.max(0,+(q.get("step")||1)-1)));
+  go(Math.min(6,Math.max(0,+(q.get("step")||1)-1)));
+  if(q.get("sim")&&step===6)$("dsim").click();
 }
 function stop(){if(timer){clearInterval(timer);timer=null;$("play").textContent="▶ Chạy cả luồng"}}
 
 function go(i){
-  step=i;const s=D.demo[cur];
+  step=i;const s=D.demo[cur];endDrive();
   [...document.querySelectorAll(".step")].forEach((b,j)=>b.setAttribute("aria-current",j===i));
   lay.clearLayers();map.removeLayer(layer);$("phone").classList.remove("on");$("legend").classList.remove("on");
   const P=$("panel");P.classList.remove("fade");void P.offsetWidth;P.classList.add("fade");
@@ -172,7 +178,7 @@ function go(i){
     map.setView([s.lat,s.lon],14);layer.addTo(map);sign.addTo(lay);$("legend").classList.add("on");
     $("phone").innerHTML=`<div class="chip hot"><img src="${s.ref}" alt=""><div>${s.label}<small>Biển sắp tới · ${s.edge.name||""}</small></div></div>`;
     $("phone").classList.add("on");
-  }else{
+  }else if(i===5){
     const R=D.route_example,b=R.before,a=R.after,dk=(a.km-b.km),f1=x=>x.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
     const roads=[...new Set(b.bans.map(x=>x.road))].join(", ");
     P.innerHTML=`<h2>6 · Áp vào tuyến và giá</h2><p class="lead">Bước tiếp theo: khi lớp biển vào router, tuyến xe tải né đoạn có biển cấm, và giá tính theo km của tuyến mới. Ví dụ: ${R.name} (bản demo, Valhalla công khai).</p>
@@ -185,8 +191,71 @@ function go(i){
     L.circleMarker(a.geometry[0],{radius:8,color:"#fff",weight:3,fillColor:"#14213D",fillOpacity:1}).addTo(lay);
     L.circleMarker(a.geometry[a.geometry.length-1],{radius:8,color:"#fff",weight:3,fillColor:"#14213D",fillOpacity:1}).addTo(lay);
     map.fitBounds(L.latLngBounds(a.geometry.concat(b.geometry)).pad(.15));
+  }else{
+    P.innerHTML=`<h2>7 · Tài xế đi và được báo biển cấm</h2><p class="lead">Mọi tài xế thừa hưởng lớp biển đã publish. Khi xe tới gần biển cấm cùng chiều đang chạy, app hiện chip và đọc to cảnh báo. Thử mô phỏng trên tuyến ở bước 6, hoặc bật GPS thật khi đang đi ở trung tâm TP.HCM.</p>
+    <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button></div>
+    <div class="gpsmsg" id="gpsmsg"></div><ul class="wlog" id="wlog"></ul>`;
+    const g=D.route_example.after.geometry;
+    L.polyline(g,{color:"#FF7F32",weight:7,opacity:.9}).addTo(lay);
+    const ev=signsAlong(g);
+    ev.forEach(e=>L.marker([e.r[0],e.r[1]],{icon:L.icon({iconUrl:`img/qcvn/${e.r[3]}.png`,iconSize:[22,22]})}).addTo(lay));
+    map.fitBounds(L.latLngBounds(g).pad(.15));
+    $("phone").innerHTML="";$("phone").classList.add("on");
+    $("dsim").onclick=()=>{endDrive();simulate(g,ev)};
+    $("dgps").onclick=()=>{endDrive();liveGps()};
+    $("dvoice").onclick=()=>{VOICE=!VOICE;$("dvoice").textContent=VOICE?"🔊 Đọc to: bật":"🔇 Đọc to: tắt"};
   }
 }
+let VOICE=true,SIM=null,WATCH=null,CAR=null;
+const SPEAK_KINDS={vehicle_ban:1,turn_ban:1,road_closed:1,speed_sign:1};
+const R2=Math.PI/180,mx=p=>[p[1]*111320*Math.cos(10.78*R2),p[0]*110540];
+const bear=(a,b)=>(Math.atan2((b[1]-a[1])*Math.cos(10.78*R2),b[0]-a[0])/R2+360)%360;
+const adiff=(a,b)=>Math.abs(((a-b+540)%360)-180);
+function signsAlong(g){
+  const cum=[0];for(let i=1;i<g.length;i++){const a=mx(g[i-1]),b=mx(g[i]);cum.push(cum[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1]))}
+  const out=new Map();
+  for(let i=0;i<g.length-1;i++){const a=mx(g[i]),b=mx(g[i+1]),h=bear(g[i],g[i+1]),dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy||1;
+    D.layer.forEach((r,k)=>{const p=mx(r);if(Math.abs(p[0]-a[0])>300||Math.abs(p[1]-a[1])>300)return;
+      const t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l2)),d=Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);
+      if(d<20&&adiff(r[4],h)<45&&!out.has(k))out.set(k,{r,at:cum[i]+t*Math.sqrt(l2)})})}
+  const ev=[...out.values()].sort((x,y)=>x.at-y.at);ev.total=cum[cum.length-1];ev.cum=cum;return ev}
+function name(r){return (D.names&&D.names[r[3]])||KIND[r[2]][0]}
+function say(t){if(!VOICE||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang="vi-VN";const v=speechSynthesis.getVoices().find(x=>x.lang&&x.lang.startsWith("vi"));if(v)u.voice=v;u.rate=1.05;speechSynthesis.speak(u)}
+function warn(r,dist){
+  const n=name(r),m=Math.max(10,Math.round(dist/10)*10);
+  $("phone").insertAdjacentHTML("afterbegin",`<div class="chip ${SPEAK_KINDS[r[2]]?"hot":""}"><img src="img/qcvn/${r[3]}.png" alt=""><div>${n}<small>còn ${m} m · ${r[3]}</small></div></div>`);
+  while($("phone").children.length>4)$("phone").lastElementChild.remove();
+  $("wlog").insertAdjacentHTML("afterbegin",`<li><img src="img/qcvn/${r[3]}.png" alt="">${n} · còn ${m} m</li>`);
+  if(SPEAK_KINDS[r[2]])say(`Phía trước ${m} mét, ${n}`);
+}
+function carAt(ll){if(!CAR)CAR=L.circleMarker(ll,{radius:9,color:"#fff",weight:3,fillColor:"#14213D",fillOpacity:1}).addTo(lay);else CAR.setLatLng(ll)}
+function simulate(g,ev){
+  let d=0,next=0;const step=5,ahead=150,cum=ev.cum;$("wlog").innerHTML="";$("phone").innerHTML="";
+  $("gpsmsg").textContent=`Tuyến ${(ev.total/1000).toFixed(2).replace(".",",")} km · ${ev.length} biển cùng chiều trên tuyến · tua nhanh khoảng 4 lần`;
+  SIM=setInterval(()=>{d+=step;if(d>=ev.total){endDrive();$("gpsmsg").textContent+=" · đã tới nơi";return}
+    let i=1;while(i<cum.length-1&&cum[i]<d)i++;const f=(d-cum[i-1])/((cum[i]-cum[i-1])||1),a=g[i-1],b=g[i];
+    const ll=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];carAt(ll);map.panTo(ll,{animate:false});
+    while(next<ev.length&&ev[next].at-d<=ahead){warn(ev[next].r,Math.max(0,ev[next].at-d));next++}
+  },110);
+  map.setZoom(17);
+}
+function liveGps(){
+  $("wlog").innerHTML="";$("phone").innerHTML="";
+  if(!navigator.geolocation){$("gpsmsg").textContent="Trình duyệt không hỗ trợ GPS.";return}
+  $("gpsmsg").textContent="Đang lấy vị trí… cho phép trình duyệt dùng vị trí.";say("Bắt đầu theo dõi biển báo");
+  let prev=null,done=new Set();
+  WATCH=navigator.geolocation.watchPosition(p=>{
+    const me=[p.coords.latitude,p.coords.longitude];carAt(me);map.setView(me,17);
+    let h=p.coords.heading;if((h==null||isNaN(h))&&prev){const mv=Math.hypot(...mx(me).map((v,k)=>v-mx(prev)[k]));if(mv>5)h=bear(prev,me)}
+    if(!prev||Math.hypot(...mx(me).map((v,k)=>v-mx(prev)[k]))>5)prev=me;
+    const pm=mx(me);let near=0;
+    D.layer.forEach((r,k)=>{const q=mx(r),dd=Math.hypot(q[0]-pm[0],q[1]-pm[1]);if(dd<2000)near++;
+      if(dd>150||done.has(k)||h==null)return;
+      if(adiff(r[4],h)<45&&adiff(bear(me,r),h)<50){done.add(k);warn(r,dd)}});
+    $("gpsmsg").textContent=h==null?`Đã có vị trí (±${Math.round(p.coords.accuracy)} m). Hãy di chuyển để biết hướng đi.`:near?`Đang theo dõi ${near} biển trong 2 km · hướng ${Math.round(h)}° · ±${Math.round(p.coords.accuracy)} m`:"Chưa có biển đã publish trong 2 km quanh bạn (lớp hiện phủ trung tâm TP.HCM).";
+  },e=>{$("gpsmsg").textContent="Không lấy được vị trí: "+e.message},{enableHighAccuracy:true,maximumAge:1000});
+}
+function endDrive(){if(SIM){clearInterval(SIM);SIM=null}if(WATCH!=null&&navigator.geolocation){navigator.geolocation.clearWatch(WATCH);WATCH=null}CAR=null;if(window.speechSynthesis)speechSynthesis.cancel()}
 </script>
 </body>
 </html>
