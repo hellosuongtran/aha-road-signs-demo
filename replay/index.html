@@ -79,6 +79,23 @@ figcaption{font-size:12px;color:var(--muted);margin-top:4px}
 .flow span{background:var(--bg);border-radius:8px;padding:4px 8px}
 footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var(--muted)}
 .fade{animation:pop .3s ease-out both}
+.uc{max-width:1200px;margin:28px auto 0;padding:0 24px}
+.uc h2.uct{font-family:"Plus Jakarta Sans",sans-serif;font-size:28px;color:var(--navy);margin:0 0 4px}
+.uc .ucsub{color:var(--body);margin:0 0 14px}
+.ucflow{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.ucflow button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--body);padding:8px 12px;border-radius:999px;cursor:pointer}
+.ucflow button small{display:block;font-size:11px;color:var(--orange-ink);font-weight:700;letter-spacing:.5px}
+.ucflow button[aria-current="true"]{background:var(--navy);color:var(--paper);border-color:var(--navy)}
+.ucflow button[aria-current="true"] small{color:var(--orange)}
+.ucgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px}
+.ucpanel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.ucpanel h3{margin:0 0 6px;font-size:20px;color:var(--navy)}
+.ucrow{display:grid;grid-template-columns:110px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
+.ucrow b{color:var(--body);font-weight:600}
+.ucwin{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--orange-tint,#FFF1E7);border-left:6px solid var(--orange);font-size:15px}
+.uctag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1.5px solid currentColor;margin-left:6px}
+#ucmap{height:440px;border-radius:16px;border:1px solid var(--line)}
+@media (max-width:820px){.ucgrid{grid-template-columns:1fr}#ucmap{height:340px}}
 </style>
 </head>
 <body>
@@ -97,6 +114,12 @@ footer{max-width:1240px;margin:auto;padding:0 16px 32px;font-size:12px;color:var
 <div class="legend" id="legend"></div></div>
 </div>
 </main>
+<section class="uc" id="usecases">
+<h2 class="uct">Use case: từ lúc nhận đơn tới lúc dẫn đường</h2>
+<p class="ucsub">Lớp biển không chỉ để vẽ bản đồ. Mỗi use case dưới đây là một chỗ trong luồng đơn của Ahamove dùng nó. Bấm từng ô để xem.</p>
+<div class="ucflow" id="ucflow"></div>
+<div class="ucgrid"><div class="ucpanel" id="ucpanel" aria-live="polite"></div><div id="ucmap"></div></div>
+</section>
 <footer>Ảnh và vị trí phát hiện biển: © Mapillary contributors, CC BY-SA 4.0. Hình biển mẫu: QCVN 41 (Wikimedia Commons, PD-VietnamGov). Nền bản đồ: © OpenStreetMap contributors. Trang này là bản chạy lại từ dữ liệu đã xử lý sẵn; ảnh tài xế Ahamove sẽ đi qua đúng các bước này.</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -108,7 +131,7 @@ const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString("vi-VN");
 const dest=(lat,lon,brg,m)=>{const r=brg*Math.PI/180;return[lat+m*Math.cos(r)/111320,lon+m*Math.sin(r)/(111320*Math.cos(lat*Math.PI/180))]};
 
-fetch("data.json").then(r=>r.json()).then(d=>{D=d;init()});
+fetch("data.json").then(r=>r.json()).then(d=>{D=d;init();ucInit()});
 
 function init(){
   $("stats").innerHTML=`<div class="stat"><b>${fmt(D.total)}</b>biển gộp được tự động</div><div class="stat"><b>${fmt(D.published)}</b>biển qua cổng, đã publish</div><div class="stat"><b>${fmt(D.held)}</b>biển giữ lại chờ thêm ảnh</div>`;
@@ -193,7 +216,7 @@ function go(i){
     map.fitBounds(L.latLngBounds(a.geometry.concat(b.geometry)).pad(.15));
   }else{
     P.innerHTML=`<h2>7 · Tài xế đi và được báo biển cấm</h2><p class="lead">Mọi tài xế thừa hưởng lớp biển đã publish. Khi xe tới gần biển cấm cùng chiều đang chạy, app hiện chip và đọc to cảnh báo. Thử mô phỏng trên tuyến ở bước 6, hoặc bật GPS thật khi đang đi ở trung tâm TP.HCM.</p>
-    <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button></div>
+    <div class="drivebar"><button class="btn" id="dsim">▶ Mô phỏng chạy tuyến</button><button class="btn ghost" id="dgps">📍 Dùng GPS thật</button><button class="btn ghost" id="dvoice">🔊 Đọc to: bật</button><select id="dvsel" class="btn ghost" aria-label="Giọng đọc"></select></div>
     <div class="gpsmsg" id="gpsmsg"></div><ul class="wlog" id="wlog"></ul>`;
     const g=D.route_example.after.geometry;
     L.polyline(g,{color:"#FF7F32",weight:7,opacity:.9}).addTo(lay);
@@ -203,10 +226,10 @@ function go(i){
     $("phone").innerHTML="";$("phone").classList.add("on");
     $("dsim").onclick=()=>{endDrive();simulate(g,ev)};
     $("dgps").onclick=()=>{endDrive();liveGps()};
-    $("dvoice").onclick=()=>{VOICE=!VOICE;$("dvoice").textContent=VOICE?"🔊 Đọc to: bật":"🔇 Đọc to: tắt"};
+    $("dvoice").onclick=()=>{VOICE=!VOICE;$("dvoice").textContent=VOICE?"🔊 Đọc to: bật":"🔇 Đọc to: tắt"};fillVoices();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=fillVoices;$("dvsel").onchange=e=>{VSEL=e.target.value;say("Xin chào, đây là giọng đọc cảnh báo biển báo")};
   }
 }
-let VOICE=true,SIM=null,WATCH=null,CAR=null;
+let VOICE=true,SIM=null,WATCH=null,CAR=null,VSEL="",ACTIVE=[];
 const SPEAK_KINDS={vehicle_ban:1,turn_ban:1,road_closed:1,speed_sign:1};
 const R2=Math.PI/180,mx=p=>[p[1]*111320*Math.cos(10.78*R2),p[0]*110540];
 const bear=(a,b)=>(Math.atan2((b[1]-a[1])*Math.cos(10.78*R2),b[0]-a[0])/R2+360)%360;
@@ -220,41 +243,111 @@ function signsAlong(g){
       if(d<20&&adiff(r[4],h)<45&&!out.has(k))out.set(k,{r,at:cum[i]+t*Math.sqrt(l2)})})}
   const ev=[...out.values()].sort((x,y)=>x.at-y.at);ev.total=cum[cum.length-1];ev.cum=cum;return ev}
 function name(r){return (D.names&&D.names[r[3]])||KIND[r[2]][0]}
-function say(t){if(!VOICE||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang="vi-VN";const v=speechSynthesis.getVoices().find(x=>x.lang&&x.lang.startsWith("vi"));if(v)u.voice=v;u.rate=1.05;speechSynthesis.speak(u)}
-function warn(r,dist){
+function voices(){if(!window.speechSynthesis)return[];const all=speechSynthesis.getVoices();const vi=all.filter(x=>x.lang&&x.lang.toLowerCase().startsWith("vi"));return vi.length?vi:all}
+function fillVoices(){const el=$("dvsel");if(!el)return;const vs=voices();el.innerHTML=vs.length?vs.map(v=>`<option value="${v.name}" ${v.name===VSEL?"selected":""}>${v.name} (${v.lang})</option>`).join(""):"<option>Máy chưa có giọng đọc</option>";if(!VSEL&&vs.length){const pref=vs.find(v=>/google|linh|an|hoaimy|namminh/i.test(v.name))||vs[0];VSEL=pref.name;el.value=VSEL}}
+function say(t){if(!VOICE||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang="vi-VN";const v=voices().find(x=>x.name===VSEL)||voices()[0];if(v)u.voice=v;u.rate=.9;u.pitch=1;speechSynthesis.speak(u)}
+function warn(r,dist,key){
   const n=name(r),m=Math.max(10,Math.round(dist/10)*10);
   $("phone").insertAdjacentHTML("afterbegin",`<div class="chip ${SPEAK_KINDS[r[2]]?"hot":""}"><img src="img/qcvn/${r[3]}.png" alt=""><div>${n}<small>còn ${m} m · ${r[3]}</small></div></div>`);
+  ACTIVE.push({key,el:$("phone").firstElementChild,r});
   while($("phone").children.length>4)$("phone").lastElementChild.remove();
   $("wlog").insertAdjacentHTML("afterbegin",`<li><img src="img/qcvn/${r[3]}.png" alt="">${n} · còn ${m} m</li>`);
   if(SPEAK_KINDS[r[2]])say(`Phía trước ${m} mét, ${n}`);
 }
-function carAt(ll){if(!CAR)CAR=L.circleMarker(ll,{radius:9,color:"#fff",weight:3,fillColor:"#14213D",fillOpacity:1}).addTo(lay);else CAR.setLatLng(ll)}
+function carIcon(h){return L.divIcon({className:"",iconSize:[44,44],iconAnchor:[22,22],html:`<svg width="44" height="44" viewBox="0 0 44 44" style="transform:rotate(${h||0}deg);transition:transform .2s"><circle cx="22" cy="22" r="20" fill="rgba(255,127,50,.22)"/><path d="M22 5 L35 36 L22 29 L9 36 Z" fill="#14213D" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>`})}
+function carAt(ll,h){if(!CAR)CAR=L.marker(ll,{icon:carIcon(h),zIndexOffset:1000}).addTo(lay);else{CAR.setLatLng(ll);const e=CAR.getElement();if(e&&h!=null)e.firstChild.style.transform=`rotate(${h}deg)`}}
+function tickActive(distOf){ACTIVE=ACTIVE.filter(a=>{const dd=distOf(a);if(dd<-15||!a.el.isConnected){a.el.style.opacity=.45;return false}a.el.querySelector("small").textContent=dd<=5?`đang qua · ${a.r[3]}`:`còn ${Math.round(dd/10)*10} m · ${a.r[3]}`;return true})}
 function simulate(g,ev){
-  let d=0,next=0;const step=5,ahead=150,cum=ev.cum;$("wlog").innerHTML="";$("phone").innerHTML="";
-  $("gpsmsg").textContent=`Tuyến ${(ev.total/1000).toFixed(2).replace(".",",")} km · ${ev.length} biển cùng chiều trên tuyến · tua nhanh khoảng 4 lần`;
+  let d=0,next=0;const step=2.5,ahead=150,cum=ev.cum;$("wlog").innerHTML="";$("phone").innerHTML="";ACTIVE=[];
+  $("gpsmsg").textContent=`Tuyến ${(ev.total/1000).toFixed(2).replace(".",",")} km · ${ev.length} biển cùng chiều trên tuyến · tua nhanh khoảng 2 lần`;
   SIM=setInterval(()=>{d+=step;if(d>=ev.total){endDrive();$("gpsmsg").textContent+=" · đã tới nơi";return}
     let i=1;while(i<cum.length-1&&cum[i]<d)i++;const f=(d-cum[i-1])/((cum[i]-cum[i-1])||1),a=g[i-1],b=g[i];
-    const ll=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];carAt(ll);map.panTo(ll,{animate:false});
-    while(next<ev.length&&ev[next].at-d<=ahead){warn(ev[next].r,Math.max(0,ev[next].at-d));next++}
+    const ll=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];carAt(ll,bear(a,b));map.panTo(ll,{animate:false});
+    while(next<ev.length&&ev[next].at-d<=ahead){warn(ev[next].r,Math.max(0,ev[next].at-d),ev[next].at);next++}
+    tickActive(x=>x.key-d);
   },110);
   map.setZoom(17);
 }
 function liveGps(){
-  $("wlog").innerHTML="";$("phone").innerHTML="";
+  $("wlog").innerHTML="";$("phone").innerHTML="";ACTIVE=[];
   if(!navigator.geolocation){$("gpsmsg").textContent="Trình duyệt không hỗ trợ GPS.";return}
   $("gpsmsg").textContent="Đang lấy vị trí… cho phép trình duyệt dùng vị trí.";say("Bắt đầu theo dõi biển báo");
   let prev=null,done=new Set();
   WATCH=navigator.geolocation.watchPosition(p=>{
-    const me=[p.coords.latitude,p.coords.longitude];carAt(me);map.setView(me,17);
+    const me=[p.coords.latitude,p.coords.longitude];map.setView(me,17);
     let h=p.coords.heading;if((h==null||isNaN(h))&&prev){const mv=Math.hypot(...mx(me).map((v,k)=>v-mx(prev)[k]));if(mv>5)h=bear(prev,me)}
     if(!prev||Math.hypot(...mx(me).map((v,k)=>v-mx(prev)[k]))>5)prev=me;
-    const pm=mx(me);let near=0;
+    carAt(me,h);const pm=mx(me);let near=0;tickActive(a=>{const q=mx(a.r);return Math.hypot(q[0]-pm[0],q[1]-pm[1])*(adiff(bear(me,a.r),h??0)<90?1:-1)});
     D.layer.forEach((r,k)=>{const q=mx(r),dd=Math.hypot(q[0]-pm[0],q[1]-pm[1]);if(dd<2000)near++;
       if(dd>150||done.has(k)||h==null)return;
-      if(adiff(r[4],h)<45&&adiff(bear(me,r),h)<50){done.add(k);warn(r,dd)}});
+      if(adiff(r[4],h)<45&&adiff(bear(me,r),h)<50){done.add(k);warn(r,dd,k)}});
     $("gpsmsg").textContent=h==null?`Đã có vị trí (±${Math.round(p.coords.accuracy)} m). Hãy di chuyển để biết hướng đi.`:near?`Đang theo dõi ${near} biển trong 2 km · hướng ${Math.round(h)}° · ±${Math.round(p.coords.accuracy)} m`:"Chưa có biển đã publish trong 2 km quanh bạn (lớp hiện phủ trung tâm TP.HCM).";
   },e=>{$("gpsmsg").textContent="Không lấy được vị trí: "+e.message},{enableHighAccuracy:true,maximumAge:1000});
 }
+
+/* ---------- use cases ---------- */
+let UM,UL;
+const T=(t,c)=>`<span class="uctag" style="color:${c}">${t}</span>`;
+const REAL=T("dữ liệu thật","#1F8A5B"),ILL=T("minh hoạ","#8A949E"),RULE=T("luật trong demo","#2B6CB0");
+const pin=(ll,c,txt)=>L.marker(ll,{icon:L.divIcon({className:"",iconSize:[30,30],iconAnchor:[15,15],html:`<div style="width:30px;height:30px;border-radius:50%;background:${c};color:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font:700 13px sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.3)">${txt}</div>`})});
+const sicon=(code,sz)=>L.icon({iconUrl:`img/qcvn/${code}.png`,iconSize:[sz||30,sz||30]});
+const zoneLayer=()=>L.polygon(D.usecase.zone,{color:"#C62828",weight:2,dashArray:"8 6",fillColor:"#C62828",fillOpacity:.08});
+let UC;const buildUC=()=>[
+ {stage:"NHẬN ĐƠN",title:"Điểm lấy hàng trong vùng cấm, giờ cấm",tags:ILL,
+  rows:[["Tình huống","Đơn xe tải 1 tấn đặt 7:30, điểm lấy ở chợ Bến Thành, trong vùng cấm tải giờ cao điểm ("+D.usecase.zone_hours.replace(","," và ")+")."],["Hôm nay","Vùng cấm được kiểm ở điểm đón và trả, nhưng chưa biết biển cấm trên từng con đường quanh điểm lấy, ví dụ hẻm cấm xe tải."],["Có lớp biển","Biết cả biển cấm quanh điểm lấy: gợi ý điểm dừng gần nhất xe được vào, hẹn giờ ngoài giờ cấm, hoặc đổi loại xe."]],
+  win:"Tránh gán tài xế vào chỗ xe không được vào ngay từ lúc nhận đơn, trước khi có chuyện trên đường.",
+  draw(){zoneLayer().addTo(UL);pin([10.7725,106.698],"#C62828","!").addTo(UL).bindTooltip("Điểm lấy 7:30 · trong vùng cấm",{permanent:true,direction:"top",offset:[0,-14]});UM.fitBounds(L.polygon(D.usecase.zone).getBounds().pad(.05))}},
+ {stage:"DISPATCH",title:"Chọn tài xế không phải chạy xuyên vùng cấm để tới điểm lấy",tags:ILL,
+  rows:[["Tình huống","Điểm lấy ở Quận 7 lúc 7:30. Tài xế A đang ở Gò Vấp, tài xế B ở Nhà Bè, cách gần như nhau."],["Hôm nay","Chọn theo khoảng cách hoặc ETA từ OSRM: A có thể được chọn, đường tới điểm lấy cắt ngang vùng cấm."],["Có lớp biển","ETA tới điểm lấy tính bằng tuyến xe tải có né cấm: A phải đi vòng xa hơn, B được ưu tiên."]],
+  win:"Ghép đơn theo đường xe được phép đi, không theo đường chim bay hay đường xe máy.",
+  draw(){zoneLayer().addTo(UL);const P=[10.729,106.718],A=[10.838,106.665],B=[10.700,106.735];
+   pin(P,"#14213D","P").addTo(UL).bindTooltip("Điểm lấy",{permanent:true,direction:"right",offset:[14,0]});
+   pin(A,"#C62828","A").addTo(UL);pin(B,"#1F8A5B","B").addTo(UL);
+   L.polyline([A,[10.79,106.69],P],{color:"#C62828",weight:5,dashArray:"10 8"}).addTo(UL).bindTooltip("A: đường ngắn nhất cắt qua vùng cấm",{sticky:true});
+   L.polyline([A,[10.86,106.62],[10.70,106.58],[10.69,106.70],P],{color:"#C62828",weight:3,opacity:.5}).addTo(UL);
+   L.polyline([B,P],{color:"#1F8A5B",weight:6}).addTo(UL).bindTooltip("B: đi thẳng, không vào vùng",{permanent:true,direction:"bottom"});
+   UM.fitBounds(L.latLngBounds([A,B,P,[10.70,106.58]]).pad(.15))}},
+ {stage:"BÁO GIÁ",title:"Giá tính trên tuyến xe được đi",tags:REAL,
+  rows:[["Tình huống",D.route_example.name+"."],["Hôm nay",`Tuyến ${D.route_example.before.km} km đi qua ${D.route_example.before.bans.length} biển cấm, giá tính trên tuyến này.`],["Có lớp biển",`Tuyến né cấm ${D.route_example.after.km} km. Giá và ETA tính trên quãng đường xe thật sự phải chạy.`]],
+  win:"Giá đúng với quãng đường thật: tài xế không chạy lỗ phần đi vòng, khách không bị báo ETA quá sớm.",
+  draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#C62828",weight:6,dashArray:"10 8"}).addTo(UL);L.polyline(R.after.geometry,{color:"#FF7F32",weight:7}).addTo(UL);UM.fitBounds(L.latLngBounds(R.after.geometry.concat(R.before.geometry)).pad(.15))}},
+ {stage:"ROUTING",title:"Cùng tuyến, khác giờ: 7:30 né, 11:00 đi thẳng",tags:RULE+ILL,
+  rows:[["Tình huống","Biển cấm xe tải có biển phụ 6:00–9:00. Cùng chuyến đi lúc 7:30 và lúc 11:00."],["Hôm nay","Không biết biển nên đi thẳng cả hai giờ, hoặc chặn cả ngày nếu dữ liệu ghi cứng."],["Có lớp biển","Valhalla nhận giờ đi theo từng đơn: 7:30 né đoạn cấm, 11:00 được đi thẳng, không vòng vô ích."]],
+  win:"Không mất quãng đường ngoài giờ cấm. Chặn cả ngày làm giá cao và ETA dài vô lý.",
+  draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#1F8A5B",weight:6}).addTo(UL).bindTooltip("11:00 · đi thẳng",{permanent:true,direction:"top"});L.polyline(R.after.geometry,{color:"#FF7F32",weight:6}).addTo(UL).bindTooltip("7:30 · né cấm",{permanent:true,direction:"bottom"});UM.fitBounds(L.latLngBounds(R.after.geometry).pad(.15))}},
+ {stage:"DẪN ĐƯỜNG",title:"Tài xế được báo trước biển cấm",tags:REAL,
+  rows:[["Tình huống","Tài xế chạy theo tuyến đã né cấm, đi qua đoạn có biển cấm rẽ, cấm dừng đỗ, hạn chế chiều cao."],["Hôm nay","Tài xế tự nhìn biển, dễ bị phạt khi biển khuất hoặc đường lạ."],["Có lớp biển","Cách biển khoảng 150 m, app hiện chip và đọc to, chỉ báo biển áp cho chiều xe đang chạy."]],
+  win:"Giảm rủi ro bị phạt cho tài xế. Xem bước 7 ở trên: mô phỏng hoặc GPS thật.",
+  draw(){const R=D.route_example.after.geometry;L.polyline(R,{color:"#FF7F32",weight:6}).addTo(UL);signsAlong(R).forEach(e=>L.marker([e.r[0],e.r[1]],{icon:sicon(e.r[3],22)}).addTo(UL));UM.fitBounds(L.latLngBounds(R).pad(.1))}},
+ {stage:"DỮ LIỆU",title:"Hai tài xế báo ngược nhau",tags:RULE+ILL,
+  rows:[["Tình huống",`Tài xế A chụp biển ${D.demo[0].qcvn} ${D.demo[0].label} trên ${D.demo[0].edge.name}. Ba ngày sau tài xế B đi qua, không thấy biển.`],["Cách xử lý",`Cần ít nhất ${D.usecase.rules.min_contributors} người độc lập (cách nhau ≥ ${D.usecase.rules.gap_s/60} phút hoặc ≥ ${D.usecase.rules.gap_m} m) mới publish. Khi mâu thuẫn: giữ trạng thái cũ, giao nhiệm vụ chụp xác minh cho tài xế thứ ba đi qua.`],["Kết quả","Router không đổi theo một báo cáo đơn lẻ. Biển đổi trạng thái khi bằng chứng nghiêng hẳn về một phía."]],
+  win:"Một tài xế báo sai, hoặc cố tình báo sai, không làm hỏng tuyến của cả mạng lưới.",
+  draw(){const s=D.demo[0],c=[s.lat,s.lon],o=(a,b)=>[c[0]+a/111320,c[1]+b/109000];
+   L.marker(c,{icon:sicon(s.qcvn,34)}).addTo(UL);pin(o(-35,-40),"#1F8A5B","A").addTo(UL).bindTooltip("A: có biển",{permanent:true,direction:"left",offset:[-14,0]});
+   pin(o(35,40),"#C62828","B").addTo(UL).bindTooltip("B: không thấy",{permanent:true,direction:"right",offset:[14,0]});
+   pin(o(-45,55),"#8A949E","?").addTo(UL).bindTooltip("Nhiệm vụ xác minh cho tài xế thứ 3",{permanent:true,direction:"bottom",offset:[0,14]});UM.setView(c,18)}},
+ {stage:"DỮ LIỆU",title:"Biển đã gỡ ngoài thực địa",tags:REAL+RULE,
+  rows:[["Tình huống",`${D.usecase.stale.qcvn} ${D.usecase.stale.label} trên ${D.usecase.stale.road}: chỉ thấy trong ảnh năm ${D.usecase.stale.last_seen.slice(0,4)}, không có ảnh mới.`],["Cách xử lý",`Ảnh cũ hơn 2022 không được publish. Biển đang publish mà ${D.usecase.rules.negative_passes} lượt tài xế đi qua liên tiếp không thấy thì hạ xuống chờ xác minh.`],["Kết quả","Không chặn tuyến vì một biển không còn tồn tại."]],
+  win:"Bản đồ tự làm mới theo thực địa, không cần đội khảo sát đi rà lại.",
+  draw(){const s=D.usecase.stale;L.marker([s.lat,s.lon],{icon:sicon(s.qcvn,34),opacity:.45}).addTo(UL).bindTooltip(`Thấy lần cuối ${s.last_seen} · giữ lại, không publish`,{permanent:true,direction:"top",offset:[0,-16]});UM.setView([s.lat,s.lon],18)}},
+ {stage:"DỮ LIỆU",title:"AI đọc nhầm hoặc chỉ có một ảnh",tags:REAL+RULE,
+  rows:[["Tình huống",`${D.usecase.single.qcvn} ${D.usecase.single.label} trên ${D.usecase.single.road}: mới thấy trong một ảnh (${D.usecase.single.last_seen}).`],["Cách xử lý","Một nguồn chưa đủ: biển nằm ở hàng chờ, không đưa vào router để chặn tuyến. Khi có thêm ảnh độc lập thì tự publish."],["Kết quả",`Toàn lớp: ${fmt(D.held)} biển đang chờ thêm ảnh, ${fmt(D.published)} biển đã qua cổng.`]],
+  win:"Chặn nhầm một con đường còn tốn hơn bỏ sót một biển: giá đội lên và tài xế phải đi vòng vô ích.",
+  draw(){const s=D.usecase.single;L.marker([s.lat,s.lon],{icon:sicon(s.qcvn,34),opacity:.6}).addTo(UL).bindTooltip("1 ảnh · chờ thêm bằng chứng",{permanent:true,direction:"top",offset:[0,-16]});UM.setView([s.lat,s.lon],18)}}
+];
+function ucInit(){
+  UC=buildUC();
+  UM=L.map("ucmap",{scrollWheelZoom:false}).setView([10.78,106.69],12);
+  L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{maxZoom:20,attribution:"© OpenStreetMap contributors · © Mapillary"}).addTo(UM);
+  UL=L.layerGroup().addTo(UM);
+  $("ucflow").innerHTML=UC.map((u,i)=>`<button data-i="${i}"><small>${i+1} · ${u.stage}</small>${u.title}</button>`).join("");
+  $("ucflow").onclick=e=>{const b=e.target.closest("button");if(b)ucGo(+b.dataset.i)};
+  ucGo(0);
+}
+function ucGo(i){const u=UC[i];[...$("ucflow").children].forEach((b,j)=>b.setAttribute("aria-current",j===i));
+  $("ucpanel").innerHTML=`<h3>${u.title}${u.tags}</h3>${u.rows.map(r=>`<div class="ucrow"><b>${r[0]}</b><span>${r[1]}</span></div>`).join("")}<div class="ucwin"><b>Lợi ích:</b> ${u.win}</div>`;
+  UL.clearLayers();u.draw()}
+
 function endDrive(){if(SIM){clearInterval(SIM);SIM=null}if(WATCH!=null&&navigator.geolocation){navigator.geolocation.clearWatch(WATCH);WATCH=null}CAR=null;if(window.speechSynthesis)speechSynthesis.cancel()}
 </script>
 </body>
