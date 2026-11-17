@@ -204,7 +204,7 @@ function go(i){
   }else if(i===5){
     const R=D.route_example,b=R.before,a=R.after,dk=(a.km-b.km),f1=x=>x.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
     const roads=[...new Set(b.bans.map(x=>x.road))].join(", ");
-    P.innerHTML=`<h2>6 · Áp vào tuyến và giá</h2><p class="lead">Bước tiếp theo: khi lớp biển vào router, tuyến xe tải né đoạn có biển cấm, và giá tính theo km của tuyến mới. Ví dụ: ${R.name} (bản demo, Valhalla công khai).</p>
+    P.innerHTML=`<h2>6 · Áp vào tuyến và giá</h2><p class="lead">Bước tiếp theo: vùng cấm theo giờ là một lớp, biển trên từng con đường là lớp khác. Khi lớp biển vào router, tuyến xe tải né đoạn có biển cấm, và giá tính theo km của tuyến mới. Ví dụ: ${R.name} (bản demo, Valhalla công khai).</p>
     <dl class="meta"><dt>Chưa có lớp biển</dt><dd>${f1(b.km)} km · ${f1(b.minutes)} phút · đi qua <b>${b.bans.length} biển cấm</b> (${roads})</dd>
     <dt>Có lớp biển Mapillary</dt><dd>${f1(a.km)} km · ${f1(a.minutes)} phút · <b>${a.bans.length} biển cấm</b></dd></dl>
     <div class="verdict">Tuyến dài thêm <b>${f1(dk)} km</b>: giá tính trên tuyến xe được đi, không phải tuyến ngắn nhưng phạm luật. Nét đứt đỏ: tuyến cũ · đường cam: tuyến né cấm.</div>
@@ -294,11 +294,11 @@ const sicon=(code,sz)=>L.icon({iconUrl:`img/qcvn/${code}.png`,iconSize:[sz||30,s
 const zoneLayer=()=>L.polygon(D.usecase.zone,{color:"#C62828",weight:2,dashArray:"8 6",fillColor:"#C62828",fillOpacity:.08});
 let UC;const buildUC=()=>[
  {stage:"NHẬN ĐƠN",title:"Điểm lấy hàng trong vùng cấm, giờ cấm",tags:ILL,
-  rows:[["Tình huống","Đơn xe tải 1 tấn đặt 7:30, điểm lấy ở chợ Bến Thành, trong vùng cấm tải giờ cao điểm ("+D.usecase.zone_hours.replace(","," và ")+")."],["Hôm nay","Vùng cấm được kiểm ở điểm đón và trả, nhưng chưa biết biển cấm trên từng con đường quanh điểm lấy, ví dụ hẻm cấm xe tải."],["Có lớp biển","Biết cả biển cấm quanh điểm lấy: gợi ý điểm dừng gần nhất xe được vào, hẹn giờ ngoài giờ cấm, hoặc đổi loại xe."]],
+  rows:[["Tình huống","Đơn xe tải 1 tấn đặt 7:30, điểm lấy ở chợ Bến Thành, trong vùng cấm tải giờ cao điểm ("+D.usecase.zone_hours.replace(","," và ")+")."],["Hôm nay","Vùng cấm theo giờ đã có trong hệ thống, nhưng biển cấm trên từng con đường quanh điểm lấy thì chưa, ví dụ hẻm cấm xe tải."],["Có lớp biển","Biết cả biển cấm quanh điểm lấy: gợi ý điểm dừng gần nhất xe được vào, hẹn giờ ngoài giờ cấm, hoặc đổi loại xe."]],
   win:"Tránh gán tài xế vào chỗ xe không được vào ngay từ lúc nhận đơn, trước khi có chuyện trên đường.",
   draw(){zoneLayer().addTo(UL);pin([10.7725,106.698],"#C62828","!").addTo(UL).bindTooltip("Điểm lấy 7:30 · trong vùng cấm",{permanent:true,direction:"top",offset:[0,-14]});UM.fitBounds(L.polygon(D.usecase.zone).getBounds().pad(.05))}},
  {stage:"DISPATCH",title:"Chọn tài xế không phải chạy xuyên vùng cấm để tới điểm lấy",tags:ILL,
-  rows:[["Tình huống","Điểm lấy ở Quận 7 lúc 7:30. Tài xế A đang ở Gò Vấp, tài xế B ở Nhà Bè, cách gần như nhau."],["Hôm nay","Chọn theo khoảng cách hoặc ETA từ OSRM: A có thể được chọn, đường tới điểm lấy cắt ngang vùng cấm."],["Có lớp biển","ETA tới điểm lấy tính bằng tuyến xe tải có né cấm: A phải đi vòng xa hơn, B được ưu tiên."]],
+  rows:[["Tình huống","Điểm lấy ở Quận 7 lúc 7:30. Tài xế A đang ở Gò Vấp, tài xế B ở Nhà Bè, cách gần như nhau."],["Hôm nay","Ghép đơn theo khoảng cách hoặc ETA chưa xét đường tài xế phải chạy tới điểm lấy: A có thể được chọn dù phải cắt ngang vùng cấm."],["Có lớp biển","ETA tới điểm lấy tính bằng tuyến xe tải có né cấm: A phải đi vòng xa hơn, B được ưu tiên."]],
   win:"Ghép đơn theo đường xe được phép đi, không theo đường chim bay hay đường xe máy.",
   draw(){zoneLayer().addTo(UL);const P=[10.729,106.718],A=[10.838,106.665],B=[10.700,106.735];
    pin(P,"#14213D","P").addTo(UL).bindTooltip("Điểm lấy",{permanent:true,direction:"right",offset:[14,0]});
@@ -311,10 +311,10 @@ let UC;const buildUC=()=>[
   rows:[["Tình huống",D.route_example.name+"."],["Hôm nay",`Tuyến ${D.route_example.before.km} km đi qua ${D.route_example.before.bans.length} biển cấm, giá tính trên tuyến này.`],["Có lớp biển",`Tuyến né cấm ${D.route_example.after.km} km. Giá và ETA tính trên quãng đường xe thật sự phải chạy.`]],
   win:"Giá đúng với quãng đường thật: tài xế không chạy lỗ phần đi vòng, khách không bị báo ETA quá sớm.",
   draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#C62828",weight:6,dashArray:"10 8"}).addTo(UL);L.polyline(R.after.geometry,{color:"#FF7F32",weight:7}).addTo(UL);UM.fitBounds(L.latLngBounds(R.after.geometry.concat(R.before.geometry)).pad(.15))}},
- {stage:"ROUTING",title:"Cùng tuyến, khác giờ: 7:30 né, 11:00 đi thẳng",tags:RULE+ILL,
-  rows:[["Tình huống","Biển cấm xe tải có biển phụ 6:00–9:00. Cùng chuyến đi lúc 7:30 và lúc 11:00."],["Hôm nay","Không biết biển nên đi thẳng cả hai giờ, hoặc chặn cả ngày nếu dữ liệu ghi cứng."],["Có lớp biển","Valhalla nhận giờ đi theo từng đơn: 7:30 né đoạn cấm, 11:00 được đi thẳng, không vòng vô ích."]],
-  win:"Không mất quãng đường ngoài giờ cấm. Chặn cả ngày làm giá cao và ETA dài vô lý.",
-  draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#1F8A5B",weight:6}).addTo(UL).bindTooltip("11:00 · đi thẳng",{permanent:true,direction:"top"});L.polyline(R.after.geometry,{color:"#FF7F32",weight:6}).addTo(UL).bindTooltip("7:30 · né cấm",{permanent:true,direction:"bottom"});UM.fitBounds(L.latLngBounds(R.after.geometry).pad(.15))}},
+ {stage:"ROUTING",title:"Vùng cấm đã có, biển trên đường thì chưa",tags:REAL+ILL,
+  rows:[["Tình huống","Ngoài giờ cấm vùng, xe tải chạy qua đoạn đường có biển cấm xe tải riêng (Phạm Văn Hai, Hoàng Văn Thụ)."],["Hôm nay","Router chỉ biết vùng cấm theo giờ, không biết biển trên từng đoạn: tuyến đi thẳng qua biển."],["Có lớp biển","Router né đúng đoạn có biển, theo loại xe và giờ ghi trên biển phụ."]],
+  win:"Vùng cấm và biển cấm là hai lớp khác nhau; thiếu lớp biển thì tuyến vẫn phạm luật dù đã né vùng.",
+  draw(){const R=D.route_example;L.polyline(R.before.geometry,{color:"#C62828",weight:6,dashArray:"10 8"}).addTo(UL).bindTooltip("Chỉ biết vùng: đi qua biển",{permanent:true,direction:"top"});L.polyline(R.after.geometry,{color:"#FF7F32",weight:6}).addTo(UL).bindTooltip("Có lớp biển: né đoạn cấm",{permanent:true,direction:"bottom"});UM.fitBounds(L.latLngBounds(R.after.geometry).pad(.15))}},
  {stage:"DẪN ĐƯỜNG",title:"Tài xế được báo trước biển cấm",tags:REAL,
   rows:[["Tình huống","Tài xế chạy theo tuyến đã né cấm, đi qua đoạn có biển cấm rẽ, cấm dừng đỗ, hạn chế chiều cao."],["Hôm nay","Tài xế tự nhìn biển, dễ bị phạt khi biển khuất hoặc đường lạ."],["Có lớp biển","Cách biển khoảng 150 m, app hiện chip và đọc to, chỉ báo biển áp cho chiều xe đang chạy."]],
   win:"Giảm rủi ro bị phạt cho tài xế. Xem bước 7 ở trên: mô phỏng hoặc GPS thật.",
